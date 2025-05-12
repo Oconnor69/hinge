@@ -75,6 +75,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'projet2.wsgi.application'
 STATIC_URL = '/static/'
 
+import pymysql
+pymysql.install_as_MySQLdb()
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
