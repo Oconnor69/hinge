@@ -1,0 +1,630 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des Offres | Gestion des Candidatures{% endblock %}
+
+{% block page_title %}Liste des Offres{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Accueil</a></li>
+<li class="breadcrumb-item active" aria-current="page">Offres</li>
+{% endblock %}
+
+{% block content %}
+<div class="animate__animated animate__fadeIn">
+    <!-- En-tête de la page -->
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <div class="header-text">
+                <h2 class="header-title">Liste des offres</h2>
+                <p class="header-subtitle">Gérez les offres d'emploi, de stage et d'alternance</p>
+            </div>
+        </div>
+        <a href="{% url 'offre_create' %}" class="btn btn-create button-animate">
+            <i class="fas fa-plus-circle"></i>
+            <span>Nouvelle offre</span>
+        </a>
+    </div>
+
+    <!-- Filtre et recherche -->
+    <div class="filter-container">
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Rechercher une offre...">
+        </div>
+        <div class="filter-box">
+            <button class="btn-filter" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-filter"></i>
+                <span>Filtrer</span>
+            </button>
+            <ul class="dropdown-menu shadow filter-menu" aria-labelledby="filterDropdown">
+                <li><a class="dropdown-item" href="#" data-filter="all">Toutes les offres</a></li>
+                <li><a class="dropdown-item" href="#" data-filter="active">Offres actives</a></li>
+                <li><a class="dropdown-item" href="#" data-filter="expired">Offres expirées</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><h6 class="dropdown-header">Par type de contrat</h6></li>
+                <li><a class="dropdown-item" href="#" data-filter="cdi">CDI</a></li>
+                <li><a class="dropdown-item" href="#" data-filter="cdd">CDD</a></li>
+                <li><a class="dropdown-item" href="#" data-filter="stage">Stage</a></li>
+                <li><a class="dropdown-item" href="#" data-filter="alternance">Alternance</a></li>
+            </ul>
+        </div>
+</div>
+
+    <!-- Liste des offres en cartes -->
+    <div class="offres-grid" id="offresContainer">
+        {% for offre in offres %}
+        <div class="offre-card animate__animated animate__fadeIn" style="animation-delay: {{ forloop.counter0|divisibleby:3 }}00ms" 
+             data-type="{{ offre.type_contrat|lower }}" 
+             data-status="{% if offre.date_expiration|date:'Y-m-d' < today|date:'Y-m-d' %}expired{% else %}active{% endif %}">
+            <div class="card-body">
+                <div class="offre-header">
+                    <div class="offre-logo">
+                        <div class="avatar-circle bg-info">
+                            {{ offre.entreprise.nom|first }}
+                            </div>
+                            </div>
+                    <div class="offre-info">
+                        <h3 class="offre-title">{{ offre.titre }}</h3>
+                        <span class="offre-entreprise">{{ offre.entreprise.nom }}</span>
+                            </div>
+                            </div>
+                
+                <div class="offre-details">
+                    <div class="detail-item">
+                        <i class="fas fa-tag"></i>
+                        <span>{{ offre.get_categorie_display }}</span>
+                            </div>
+                    <div class="detail-item">
+                        <i class="fas fa-file-contract"></i>
+                        <span class="badge-contrat {{ offre.type_contrat|lower }}">{{ offre.type_contrat }}</span>
+                                </div>
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Publiée le {{ offre.date_publication|date:"d/m/Y" }}</span>
+                            </div>
+                    <div class="detail-item">
+                        <i class="fas fa-clock"></i>
+                            {% if offre.date_expiration|date:'Y-m-d' < today|date:'Y-m-d' %}
+                            <span class="text-danger"><i class="fas fa-exclamation-circle me-1"></i>Expirée le {{ offre.date_expiration|date:"d/m/Y" }}</span>
+                            {% elif offre.date_expiration|date:'Y-m-d' <= days7|date:'Y-m-d' %}
+                            <span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Expire le {{ offre.date_expiration|date:"d/m/Y" }}</span>
+                            {% else %}
+                            <span class="text-success"><i class="fas fa-check-circle me-1"></i>Expire le {{ offre.date_expiration|date:"d/m/Y" }}</span>
+                            {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <a href="{% url 'offre_detail' offre.pk %}" class="btn-action btn-view button-animate">
+                                    <i class="fas fa-eye"></i>
+                    <span>Détails</span>
+                                </a>
+                <div class="action-group">
+                    <a href="{% url 'offre_update' offre.pk %}" class="btn-icon btn-edit button-animate" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                    <a href="{% url 'offre_delete' offre.pk %}" class="btn-icon btn-delete button-animate" title="Supprimer">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+            </div>
+        </div>
+                    {% empty %}
+                            <div class="empty-state animate__animated animate__fadeIn">
+            <div class="empty-icon">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <h3 class="empty-title">Aucune offre disponible</h3>
+            <p class="empty-text">Commencez par créer une nouvelle offre d'emploi.</p>
+            <a href="{% url 'offre_create' %}" class="btn btn-create button-animate">
+                <i class="fas fa-plus-circle"></i>
+                <span>Ajouter une offre</span>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Header styles */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .header-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(121, 106, 205, 0.8), rgba(121, 106, 205, 0.6));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 10px rgba(121, 106, 205, 0.2);
+    }
+    
+    .header-title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .header-subtitle {
+        margin: 0.3rem 0 0 0;
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+    
+    .btn-create {
+        padding: 0.7rem 1.2rem;
+        background: linear-gradient(135deg, #796ACD, #9B8BDB);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 10px rgba(121, 106, 205, 0.3);
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-create:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(121, 106, 205, 0.35);
+        color: white;
+    }
+    
+    /* Filter and search */
+    .filter-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .search-box {
+        flex: 1;
+        position: relative;
+        height: 3em;
+        border-radius: 2em;
+        border: 2px solid rgba(121, 106, 205, 0.7);
+        display: flex;
+        align-items: center;
+        background-color: white;
+        box-shadow: 0 4px 12px rgba(121, 106, 205, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .search-box:focus-within {
+        border-color: #796ACD;
+        box-shadow: 0 4px 16px rgba(121, 106, 205, 0.2);
+    }
+    
+    .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        margin: 0 1em;
+        color: rgba(121, 106, 205, 0.9);
+        font-size: 1rem;
+        font-weight: 500;
+        background: transparent;
+    }
+    
+    .search-input::placeholder {
+        color: rgba(121, 106, 205, 0.6);
+        font-weight: 500;
+    }
+    
+    .search-icon {
+        margin-left: 1.5em;
+        color: rgba(121, 106, 205, 0.7);
+        font-size: 1rem;
+    }
+    
+    .btn-filter {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        background-color: white;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        color: #555;
+        font-weight: 500;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-filter:hover {
+        border-color: rgba(121, 106, 205, 0.5);
+        color: var(--primary-color);
+    }
+    
+    .filter-menu {
+        padding: 0.8rem;
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .filter-menu .dropdown-item {
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .filter-menu .dropdown-item:hover {
+        background-color: rgba(121, 106, 205, 0.1);
+        color: var(--primary-color);
+    }
+    
+    /* Grid layout */
+    .offres-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    /* Offre card styles */
+    .offre-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+    
+    .offre-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(121, 106, 205, 0.15);
+        border-color: rgba(121, 106, 205, 0.1);
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+        flex: 1;
+    }
+    
+    .offre-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .offre-logo {
+        flex-shrink: 0;
+    }
+    
+    .avatar-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .offre-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .offre-title {
+        margin: 0 0 0.3rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .offre-entreprise {
+        display: block;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .offre-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .detail-item i {
+        color: var(--primary-color);
+        opacity: 0.7;
+        width: 16px;
+    }
+    
+    .badge-contrat {
+        display: inline-block;
+        padding: 0.3rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .badge-contrat.cdi {
+        background-color: rgba(40, 167, 69, 0.15);
+        color: #28a745;
+    }
+    
+    .badge-contrat.cdd {
+        background-color: rgba(23, 162, 184, 0.15);
+        color: #17a2b8;
+    }
+    
+    .badge-contrat.stage {
+        background-color: rgba(255, 193, 7, 0.15);
+        color: #ffc107;
+    }
+    
+    .badge-contrat.alternance {
+        background-color: rgba(111, 66, 193, 0.15);
+        color: #6f42c1;
+    }
+    
+    /* Card actions */
+    .card-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background-color: rgba(121, 106, 205, 0.05);
+        border-top: 1px solid rgba(0, 0, 0, 0.03);
+    }
+    
+    .btn-action {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-view {
+        background-color: rgba(121, 106, 205, 0.1);
+        color: var(--primary-color);
+    }
+    
+    .btn-view:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .action-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    
+    .btn-edit {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .btn-edit:hover {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .btn-delete {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+    
+    .btn-delete:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    /* Empty state */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        text-align: center;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        grid-column: 1 / -1;
+    }
+    
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: rgba(121, 106, 205, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+    
+    .empty-text {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Animation */
+    .button-animate {
+        transition: all 0.3s ease;
+    }
+    
+    .button-animate:hover {
+        transform: translateY(-3px);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialiser les tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        
+        // Recherche
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                const offres = document.querySelectorAll('.offre-card');
+                
+                offres.forEach(offre => {
+                    const title = offre.querySelector('.offre-title').textContent.toLowerCase();
+                    const entreprise = offre.querySelector('.offre-entreprise').textContent.toLowerCase();
+                        
+                        if (title.includes(searchTerm) || entreprise.includes(searchTerm)) {
+                        offre.style.display = '';
+                        } else {
+                        offre.style.display = 'none';
+                }
+            });
+                
+                // Afficher l'état vide si aucun résultat
+                checkEmptyResults();
+            });
+        }
+        
+        // Filtrage
+        const filterLinks = document.querySelectorAll('.dropdown-item[data-filter]');
+        filterLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const filterValue = this.getAttribute('data-filter');
+                const offres = document.querySelectorAll('.offre-card');
+                
+                offres.forEach(offre => {
+                    if (filterValue === 'all') {
+                        offre.style.display = '';
+                    } else if (filterValue === 'active' || filterValue === 'expired') {
+                        if (offre.getAttribute('data-status') === filterValue) {
+                            offre.style.display = '';
+                        } else {
+                            offre.style.display = 'none';
+                        }
+                    } else {
+                        if (offre.getAttribute('data-type') === filterValue) {
+                            offre.style.display = '';
+                } else {
+                            offre.style.display = 'none';
+                }
+                    }
+                });
+                
+                // Mettre à jour le texte du bouton de filtre
+                document.querySelector('.btn-filter span').textContent = this.textContent;
+                
+                // Afficher l'état vide si aucun résultat
+                checkEmptyResults();
+                });
+        });
+        
+        // Fonction pour vérifier s'il y a des résultats ou afficher l'état vide
+        function checkEmptyResults() {
+            const container = document.getElementById('offresContainer');
+            const visibleOffres = Array.from(document.querySelectorAll('.offre-card')).filter(offre => offre.style.display !== 'none');
+            
+            // Supprimer l'état vide s'il existe déjà
+            const existingEmpty = container.querySelector('.empty-results');
+            if (existingEmpty) {
+                container.removeChild(existingEmpty);
+            }
+            
+            // Ajouter un état vide si nécessaire
+            if (visibleOffres.length === 0 && !container.querySelector('.empty-state')) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'empty-state empty-results animate__animated animate__fadeIn';
+                emptyDiv.innerHTML = `
+                    <div class="empty-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="empty-title">Aucun résultat trouvé</h3>
+                    <p class="empty-text">Essayez de modifier vos critères de recherche ou de filtre.</p>
+                    <button class="btn btn-create button-animate" onclick="resetFilters()">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Réinitialiser les filtres</span>
+                    </button>
+                `;
+                container.appendChild(emptyDiv);
+                        }
+        }
+        
+        // Fonction pour réinitialiser les filtres
+        window.resetFilters = function() {
+            document.getElementById('searchInput').value = '';
+            document.querySelector('.btn-filter span').textContent = 'Filtrer';
+            
+            const offres = document.querySelectorAll('.offre-card');
+            offres.forEach(offre => {
+                offre.style.display = '';
+                    });
+            
+            checkEmptyResults();
+        };
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Modifier{% else %}Créer{% endif %} une candidature{% endblock %}
+
+{% block page_title %}{% if form.instance.pk %}Modifier{% else %}Créer{% endif %} une candidature{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Accueil</a></li>
+<li class="breadcrumb-item"><a href="{% url 'candidature_list' %}">Candidatures</a></li>
+<li class="breadcrumb-item active" aria-current="page">{% if form.instance.pk %}Modifier{% else %}Créer{% endif %}</li>
+{% endblock %}
+
+{% block content %}
+<div class="animate__animated animate__fadeIn">
+    <div class="card form-card">
+        <!-- En-tête du formulaire -->
+        <div class="card-header">
+            <div class="header-content">
+                <div class="header-icon">
+                    {% if form.instance.pk %}
+                    <i class="fas fa-edit"></i>
+                    {% else %}
+                    <i class="fas fa-plus-circle"></i>
+                    {% endif %}
+                </div>
+                <div class="header-text">
+                    <h3 class="form-title">{% if form.instance.pk %}Modifier{% else %}Créer{% endif %} une candidature</h3>
+                    <p class="form-subtitle">Saisissez les informations de la candidature dans le formulaire ci-dessous</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Corps du formulaire -->
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" class="custom-form" id="candidatureForm">
+                {% csrf_token %}
+                
+                <div class="form-sections">
+                    <!-- Section principale pour les informations de la candidature -->
+                    <div class="form-section animate__animated animate__fadeInUp animation-delay-1">
+                        <div class="section-header">
+                            <i class="fas fa-user-tie icon-circle"></i>
+                            <h4>Informations de la candidature</h4>
+                        </div>
+                        
+                        <div class="row">
+                            {% for field in form %}
+                            <div class="col-md-6 form-field-container">
+                                <div class="form-group">
+                                    <label for="{{ field.id_for_label }}" class="form-label">
+                                        {{ field.label }}
+                                        {% if field.field.required %}
+                                            <span class="required-indicator">*</span>
+                                        {% endif %}
+                                    </label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        <div class="error-messages">
+                                            {% for error in field.errors %}
+                                                <div class="error-message">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Actions du formulaire -->
+                <div class="form-actions animate__animated animate__fadeInUp animation-delay-2">
+                    <button type="submit" class="btn btn-primary btn-action button-animate">
+                        <i class="fas fa-save"></i>
+                        <span class="btn-text">Enregistrer</span>
+                    </button>
+                    <a href="{% if form.instance.pk %}{% url 'candidature_detail' pk=form.instance.pk %}{% else %}{% url 'candidature_list' %}{% endif %}" class="btn btn-retour btn-action button-animate">
+                        <i class="fas fa-arrow-left"></i>
+                        <span class="btn-text">Retour</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Styles pour la carte du formulaire */
+    .form-card {
+        border: none;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(121, 106, 205, 0.15);
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+        background-color: #ffffff;
+    }
+    
+    /* Styles pour l'en-tête du formulaire */
+    .card-header {
+        background: linear-gradient(135deg, rgba(121, 106, 205, 0.9), rgba(121, 106, 205, 0.7));
+        color: white;
+        border: none;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .card-header::before {
+        content: '';
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        top: -100px;
+        right: -50px;
+        z-index: 0;
+    }
+    
+    .card-header::after {
+        content: '';
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        bottom: -70px;
+        left: -70px;
+        z-index: 0;
+    }
+    
+    .header-content {
+        display: flex;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .header-icon {
+        width: 50px;
+        height: 50px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1.2rem;
+        font-size: 1.6rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .header-icon:hover {
+        transform: rotate(10deg);
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .form-title {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.4rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-subtitle {
+        margin: 0.4rem 0 0 0;
+        opacity: 0.9;
+        font-size: 0.9rem;
+        max-width: 500px;
+    }
+    
+    /* Styles pour le corps du formulaire */
+    .card-body {
+        padding: 2rem;
+        background-color: #ffffff;
+    }
+    
+    .custom-form .form-sections {
+        margin-bottom: 2rem;
+    }
+    
+    .form-section {
+        margin-bottom: 2.5rem;
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 1.2rem;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+    
+    .form-section:hover {
+        box-shadow: 0 5px 20px rgba(121, 106, 205, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding-bottom: 0.8rem;
+    }
+    
+    .icon-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: rgba(121, 106, 205, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 1rem;
+        margin-right: 0.8rem;
+        transition: all 0.3s ease;
+    }
+    
+    .section-header:hover .icon-circle {
+        transform: scale(1.1);
+        background-color: rgba(121, 106, 205, 0.15);
+    }
+    
+    .section-header h4 {
+        margin: 0;
+        color: var(--gray-700);
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+    
+    /* Styles pour les champs du formulaire */
+    .form-field-container {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--gray-700);
+        font-size: 0.9rem;
+    }
+    
+    .required-indicator {
+        color: var(--danger-color);
+        margin-left: 0.25rem;
+    }
+    
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="url"],
+    .form-group input[type="tel"],
+    .form-group input[type="number"],
+    .form-group input[type="date"],
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: var(--gray-700);
+        transition: border-color 0.3s, box-shadow 0.3s;
+        background-color: #fff;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 4px rgba(121, 106, 205, 0.15);
+        outline: none;
+    }
+    
+    .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    
+    .form-text {
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+        color: #6c757d;
+    }
+    
+    .error-messages {
+        margin-top: 0.5rem;
+    }
+    
+    .error-message {
+        color: var(--danger-color);
+        font-size: 0.8rem;
+        padding: 0.3rem 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .error-message::before {
+        content: "\f06a";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        margin-right: 0.5rem;
+    }
+    
+    /* Styles pour les actions du formulaire */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        animation-delay: 0.4s;
+    }
+    
+    .btn-action {
+        padding: 0.8rem 1.8rem;
+        border-radius: 8px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        font-size: 0.95rem;
+    }
+    
+    .btn-action i {
+        margin-right: 0.6rem;
+        font-size: 1rem;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(121, 106, 205, 0.25);
+    }
+    
+    .btn-retour {
+        background-color: #8F82D9;
+        color: white;
+        border: none;
+    }
+    
+    .btn-retour:hover {
+        background-color: #A095E1;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(143, 130, 217, 0.25);
+    }
+    
+    /* Force le texte blanc sur les boutons */
+    .btn-primary, .btn-retour,
+    .btn-primary:hover, .btn-retour:hover {
+        color: white !important;
+    }
+    
+    /* Animation des boutons */
+    .button-animate {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .button-animate::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.4s ease-in-out;
+        z-index: -1;
+    }
+    
+    .button-animate:hover::before {
+        left: 0;
+        width: 100%;
+    }
+    
+    .button-animate:active {
+        transform: scale(0.97);
+        transition: transform 0.1s;
+    }
+    
+    /* Animation delay */
+    .animation-delay-1 {
+        animation-delay: 0.2s;
+    }
+    
+    .animation-delay-2 {
+        animation-delay: 0.4s;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-header {
+            padding: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .form-section {
+            padding: 1.2rem;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,559 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ entreprise.nom }} | Détail de l'entreprise{% endblock %}
+
+{% block page_title %}{{ entreprise.nom }}{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Accueil</a></li>
+<li class="breadcrumb-item"><a href="{% url 'entreprise_list' %}">Entreprises</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ entreprise.nom }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="animate__animated animate__fadeIn">
+    <div class="company-detail-container">
+        <!-- En-tête avec informations principales -->
+        <div class="company-header">
+            <div class="header-content">
+                <div class="logo-section animate__animated animate__fadeInLeft">
+                    {% if entreprise.logo %}
+                    <div class="logo-container">
+                        <img src="{{ entreprise.logo.url }}" alt="Logo {{ entreprise.nom }}" class="company-logo">
+                    </div>
+                    {% else %}
+                    <div class="logo-container empty-logo">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="company-info animate__animated animate__fadeInRight">
+                    <h1 class="company-name">{{ entreprise.nom }}</h1>
+                    {% if entreprise.site_web %}
+                    <div class="website-badge">
+                        <i class="fas fa-globe"></i>
+                        <a href="{{ entreprise.site_web }}" target="_blank" rel="noopener noreferrer">{{ entreprise.site_web }}</a>
+                    </div>
+                    {% endif %}
+                    {% if entreprise.secteur %}
+                    <div class="sector-badge">
+                        <i class="fas fa-tags"></i>
+                        <span>{{ entreprise.secteur }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="action-buttons animate__animated animate__fadeInUp">
+                <a href="{% url 'entreprise_update' entreprise.pk %}" class="btn-action btn-edit button-animate">
+                    <i class="fas fa-edit"></i>
+                    <span>Modifier</span>
+                </a>
+                <a href="{% url 'entreprise_delete' entreprise.pk %}" class="btn-action btn-delete button-animate">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Supprimer</span>
+                </a>
+                <a href="{% url 'entreprise_list' %}" class="btn-action btn-return button-animate">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Contenu principal avec sections -->
+        <div class="company-content">
+            <!-- Section Description -->
+            <div class="content-section animate__animated animate__fadeInUp animation-delay-1">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-align-left"></i>
+                    </div>
+                    <h2 class="section-title">Description</h2>
+                </div>
+                <div class="section-body">
+                    {% if entreprise.description %}
+                    <div class="description-content">
+                        {{ entreprise.description|linebreaks }}
+                    </div>
+                    {% else %}
+                    <div class="empty-content">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Aucune description disponible pour cette entreprise.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Section Contact -->
+            <div class="content-section animate__animated animate__fadeInUp animation-delay-2">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-address-card"></i>
+                    </div>
+                    <h2 class="section-title">Coordonnées</h2>
+                </div>
+                <div class="section-body">
+                    <div class="contact-grid">
+                        {% if entreprise.email %}
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-info">
+                                <h3>Email</h3>
+                                <p><a href="mailto:{{ entreprise.email }}">{{ entreprise.email }}</a></p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if entreprise.telephone %}
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="contact-info">
+                                <h3>Téléphone</h3>
+                                <p><a href="tel:{{ entreprise.telephone }}">{{ entreprise.telephone }}</a></p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if not entreprise.email and not entreprise.telephone %}
+                        <div class="empty-content">
+                            <i class="fas fa-info-circle"></i>
+                            <p>Aucune information de contact disponible pour cette entreprise.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Conteneur principal */
+    .company-detail-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    /* En-tête entreprise */
+    .company-header {
+        background: linear-gradient(135deg, rgb(121, 106, 205, 0.9), rgb(121, 106, 205, 0.7));
+        border-radius: 16px;
+        padding: 2rem;
+        color: white;
+        box-shadow: 0 8px 20px rgba(121, 106, 205, 0.2);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .company-header::before, .company-header::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .company-header::before {
+        width: 200px;
+        height: 200px;
+        top: -80px;
+        right: -50px;
+    }
+    
+    .company-header::after {
+        width: 150px;
+        height: 150px;
+        bottom: -60px;
+        left: -40px;
+    }
+    
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Logo */
+    .logo-section {
+        flex-shrink: 0;
+    }
+    
+    .logo-container {
+        width: 120px;
+        height: 120px;
+        border-radius: 12px;
+        background-color: white;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        border: 4px solid rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
+    }
+    
+    .logo-container:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+    
+    .company-logo {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        padding: 8px;
+    }
+    
+    .empty-logo {
+        color: var(--primary-color);
+        font-size: 3rem;
+    }
+    
+    /* Informations entreprise */
+    .company-info {
+        flex-grow: 1;
+    }
+    
+    .company-name {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 1rem 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .website-badge, .sector-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        margin-right: 1rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .website-badge a {
+        color: white;
+        text-decoration: none;
+    }
+    
+    .website-badge a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Boutons d'action */
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .btn-action {
+        padding: 0.7rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-action i {
+        font-size: 1rem;
+    }
+    
+    .btn-edit {
+        background-color: #ff9800;
+        color: white;
+    }
+    
+    .btn-edit:hover {
+        background-color: #f57c00;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(245, 124, 0, 0.3);
+        color: white;
+    }
+    
+    .btn-delete {
+        background-color: #f44336;
+        color: white;
+    }
+    
+    .btn-delete:hover {
+        background-color: #e53935;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(229, 57, 53, 0.3);
+        color: white;
+    }
+    
+    .btn-return {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn-return:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        color: white;
+    }
+    
+    /* Contenu principal */
+    .company-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    /* Sections */
+    .content-section {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .content-section:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(121, 106, 205, 0.15);
+    }
+    
+    .section-header {
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .section-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background-color: rgba(121, 106, 205, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    
+    .section-title {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .section-body {
+        padding: 1.5rem;
+    }
+    
+    /* Contenu description */
+    .description-content {
+        color: #495057;
+        line-height: 1.7;
+        font-size: 1rem;
+    }
+    
+    .description-content p:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Grille pour les contacts */
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+    
+    .contact-item:hover {
+        background-color: #f0f3f5;
+        transform: translateY(-2px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .contact-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background-color: rgba(121, 106, 205, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    
+    .contact-info {
+        flex-grow: 1;
+    }
+    
+    .contact-info h3 {
+        margin: 0 0 0.3rem 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .contact-info p {
+        margin: 0;
+        color: #495057;
+    }
+    
+    .contact-info a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    .contact-info a:hover {
+        text-decoration: underline;
+    }
+    
+    /* État vide */
+    .empty-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        color: #6c757d;
+        text-align: center;
+    }
+    
+    .empty-content i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #adb5bd;
+    }
+    
+    .empty-content p {
+        margin: 0;
+        font-size: 1rem;
+    }
+    
+    /* Animation des boutons */
+    .button-animate {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .button-animate::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.4s ease-in-out;
+        z-index: -1;
+    }
+    
+    .button-animate:hover::before {
+        left: 0;
+        width: 100%;
+    }
+    
+    .button-animate:active {
+        transform: scale(0.97) !important;
+        transition: transform 0.1s;
+    }
+    
+    /* Animation séquentielle des boutons */
+    .action-buttons .button-animate:nth-child(1) {
+        animation: fadeInButton 0.5s ease-out 0.3s backwards;
+    }
+    
+    .action-buttons .button-animate:nth-child(2) {
+        animation: fadeInButton 0.5s ease-out 0.5s backwards;
+    }
+    
+    .action-buttons .button-animate:nth-child(3) {
+        animation: fadeInButton 0.5s ease-out 0.7s backwards;
+    }
+    
+    @keyframes fadeInButton {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Délais d'animation */
+    .animation-delay-1 {
+        animation-delay: 0.3s;
+    }
+    
+    .animation-delay-2 {
+        animation-delay: 0.5s;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .company-header {
+            padding: 1.5rem;
+        }
+        
+        .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+        
+        .company-info {
+            width: 100%;
+        }
+        
+        .action-buttons {
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .btn-action {
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .contact-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

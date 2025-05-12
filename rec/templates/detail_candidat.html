@@ -1,0 +1,629 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du candidat | {{ candidat.prenom }} {{ candidat.nom }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #796ACD;
+            --primary-dark: #6457B5;
+            --primary-light: #8F82D9;
+            --primary-lighter: #A095E1;
+            --primary-gradient: linear-gradient(145deg, #8a77dd, #6457B5);
+            --secondary-color: #f7fafc;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #2dce89;
+            --info-color: #11cdef;
+            --warning-color: #fb6340;
+            --danger-color: #f5365c;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Barre de navigation moderne */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 1rem;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+        }
+        
+        .back-btn:hover {
+            background-color: var(--gray-300);
+            color: var(--gray-900);
+            transform: translateX(-3px);
+        }
+
+        /* Header avec effet de gradient */
+        .candidate-header {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .candidate-header::before, 
+        .candidate-header::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .candidate-header::before {
+            width: 250px;
+            height: 250px;
+            top: -100px;
+            right: -70px;
+        }
+
+        .candidate-header::after {
+            width: 200px;
+            height: 200px;
+            bottom: -80px;
+            left: -60px;
+        }
+
+        .header-content {
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .candidate-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .badges-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .info-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            font-size: 0.85rem;
+        }
+
+        /* Cartes d'information */
+        .info-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background-color: rgba(121, 106, 205, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.4rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        .info-value a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .info-value a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* Documents */
+        .documents-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .document-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background-color: var(--gray-100);
+            transition: var(--transition);
+        }
+
+        .document-card:hover {
+            background-color: var(--gray-200);
+            transform: translateY(-3px);
+        }
+
+        .document-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: rgba(121, 106, 205, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-title {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .document-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .document-link:hover {
+            color: var(--primary-dark);
+        }
+
+        .document-empty {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            font-style: italic;
+        }
+
+        /* Liste des candidatures */
+        .candidatures-list {
+            margin-top: 1rem;
+        }
+
+        .candidature-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background-color: white;
+            margin-bottom: 1rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .candidature-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .candidature-info {
+            flex: 1;
+        }
+
+        .candidature-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .candidature-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .candidature-date {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-en_attente {
+            background-color: rgba(251, 99, 64, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-acceptee {
+            background-color: rgba(45, 206, 137, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-refusee {
+            background-color: rgba(245, 54, 92, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* Bouton de retour */
+        .btn-return {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            margin-top: 1.5rem;
+        }
+
+        .btn-return:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .candidate-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .documents-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .candidature-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Barre de navigation -->
+        <nav class="navbar">
+            <div class="navbar-left">
+                <a href="{% url 'candidats_postules' %}" class="nav-btn back-btn">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
+            </div>
+        </nav>
+        
+        <!-- En-tête du candidat -->
+        <header class="candidate-header">
+            <div class="header-content">
+                <div class="candidate-avatar">
+                    {{ candidat.prenom|first }}{{ candidat.nom|first }}
+                </div>
+                <div class="header-text">
+                    <h1 class="header-title">{{ candidat.prenom }} {{ candidat.nom }}</h1>
+                    <div class="badges-container">
+                        <div class="info-badge">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>{{ candidat.get_niveau_etude_display }}</span>
+                        </div>
+                        <div class="info-badge">
+                            <i class="fas fa-briefcase"></i>
+                            <span>{{ candidat.annee_experience }} an(s) d'expérience</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Informations personnelles -->
+        <div class="info-card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2 class="card-title">Informations personnelles</h2>
+            </div>
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-envelope"></i>
+                            <span>Email</span>
+                        </div>
+                        <div class="info-value">
+                            <a href="mailto:{{ candidat.email }}">{{ candidat.email }}</a>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-phone"></i>
+                            <span>Téléphone</span>
+                        </div>
+                        <div class="info-value">
+                            <a href="tel:{{ candidat.telephone }}">{{ candidat.telephone }}</a>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Adresse</span>
+                        </div>
+                        <div class="info-value">{{ candidat.adresse|default:"Non renseignée" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-venus-mars"></i>
+                            <span>Sexe</span>
+                        </div>
+                        <div class="info-value">{{ candidat.get_sexe_display }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-birthday-cake"></i>
+                            <span>Date de naissance</span>
+                        </div>
+                        <div class="info-value">{{ candidat.date_naissance|date:"d F Y" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="info-card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h2 class="card-title">Documents</h2>
+            </div>
+            <div class="card-body">
+                <div class="documents-container">
+                    <div class="document-card">
+                        <div class="document-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="document-info">
+                            <div class="document-title">Curriculum Vitae</div>
+                            {% if candidat.cv %}
+                                <a href="{{ candidat.cv.url }}" class="document-link" download>
+                                    <i class="fas fa-download"></i>
+                                    <span>Télécharger</span>
+                                </a>
+                            {% else %}
+                                <div class="document-empty">Non fourni</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="document-card">
+                        <div class="document-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="document-info">
+                            <div class="document-title">Certificat</div>
+                            {% if candidat.certificat %}
+                                <a href="{{ candidat.certificat.url }}" class="document-link" download>
+                                    <i class="fas fa-download"></i>
+                                    <span>Télécharger</span>
+                                </a>
+                            {% else %}
+                                <div class="document-empty">Non fourni</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Candidatures -->
+        <div class="info-card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <h2 class="card-title">Offres auxquelles il/elle a postulé</h2>
+            </div>
+            <div class="card-body">
+                <div class="candidatures-list">
+                    {% for candidature in candidatures %}
+                        <div class="candidature-item">
+                            <div class="candidature-info">
+                                <h3 class="candidature-title">{{ candidature.offre.titre }}</h3>
+                                <div class="candidature-meta">
+                                    <div class="candidature-date">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>Postulé le {{ candidature.date_postulation|date:"d/m/Y H:i" }}</span>
+                                    </div>
+                                    <div class="status-badge status-{{ candidature.statut|lower }}">
+                                        {% if candidature.statut == 'EN_ATTENTE' %}
+                                            <i class="fas fa-hourglass-half"></i>
+                                        {% elif candidature.statut == 'ACCEPTEE' %}
+                                            <i class="fas fa-check-circle"></i>
+                                        {% else %}
+                                            <i class="fas fa-times-circle"></i>
+                                        {% endif %}
+                                        <span>{{ candidature.get_statut_display }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>Aucune candidature trouvée.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Bouton de retour -->
+        <a href="{% url 'candidats_postules' %}" class="btn-return">
+            <i class="fas fa-arrow-left"></i>
+            <span>Retour à la liste des candidats</span>
+        </a>
+    </div>
+</body>
+</html>

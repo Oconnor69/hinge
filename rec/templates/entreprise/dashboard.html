@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Entreprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #796ACD;
+            --primary-dark: #6457B5;
+            --primary-light: #8F82D9;
+            --primary-lighter: #A095E1;
+            --primary-gradient: linear-gradient(145deg, #8a77dd, #6457B5);
+            --secondary-color: #f7fafc;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #2dce89;
+            --info-color: #11cdef;
+            --warning-color: #fb6340;
+            --danger-color: #f5365c;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Barre de navigation moderne */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 1rem;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        
+        .navbar-brand {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            position: relative;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            background: rgba(121, 106, 205, 0.08);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 3px 10px rgba(121, 106, 205, 0.1);
+            transition: var(--transition);
+        }
+        
+        .navbar-brand::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            bottom: 5px;
+            left: 1rem;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        
+        .navbar-brand:hover {
+            background: rgba(121, 106, 205, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        .navbar-brand:hover::after {
+            width: calc(100% - 2rem);
+        }
+        
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        
+        .navbar-logo {
+            width: 47px;
+            height: 47px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid rgba(121, 106, 205, 0.2);
+            box-shadow: 0 3px 10px rgba(121, 106, 205, 0.1);
+            transition: var(--transition);
+        }
+        
+        .navbar-logo:hover {
+            transform: scale(1.1);
+            border-color: var(--primary-color);
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+        }
+        
+        .back-btn:hover {
+            background-color: var(--gray-300);
+            color: var(--gray-900);
+            transform: translateX(-3px);
+        }
+        
+        .logout-btn {
+            background-color: rgba(245, 54, 92, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .logout-btn:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Header avec effet de gradient amélioré */
+        .dashboard-header {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before, 
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dashboard-header::before {
+            width: 250px;
+            height: 250px;
+            top: -100px;
+            right: -70px;
+        }
+
+        .dashboard-header::after {
+            width: 200px;
+            height: 200px;
+            bottom: -80px;
+            left: -60px;
+        }
+
+        .entreprise-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .entreprise-logo:hover {
+            transform: scale(1.05) rotate(3deg);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            z-index: 1;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .entreprise-name {
+            color: white;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .entreprise-name::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            bottom: -4px;
+            left: 0;
+            border-radius: 10px;
+        }
+
+        /* Statistiques */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(121, 106, 205, 0.15);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .stat-icon.primary {
+            background-color: rgba(121, 106, 205, 0.1);
+            color: var(--primary-color);
+        }
+
+        .stat-icon.success {
+            background-color: rgba(45, 206, 137, 0.1);
+            color: var(--success-color);
+        }
+
+        .stat-icon.warning {
+            background-color: rgba(251, 99, 64, 0.1);
+            color: var(--warning-color);
+        }
+
+        .stat-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin: 0;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin: 0;
+        }
+
+        /* Cartes d'information */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(121, 106, 205, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .header-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background-color: rgba(121, 106, 205, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .info-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: var(--gray-800);
+        }
+
+        /* Actions */
+        .actions-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            background-color: white;
+            color: var(--gray-800);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-200);
+        }
+
+        .nav-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(121, 106, 205, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .nav-link:hover .link-icon {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .link-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background-color: rgba(121, 106, 205, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .link-text {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .export-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.2rem;
+            background-color: rgba(45, 206, 137, 0.1);
+            color: var(--success-color);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+            margin-top: 1rem;
+            width: fit-content;
+        }
+
+        .export-link:hover {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1.5rem;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .navbar-left, .navbar-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            
+            .card-grid, 
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="navbar">
+            <div class="navbar-left">
+                <a href="{% url 'home' %}" class="nav-btn back-btn">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+            <div class="navbar-right">
+                {% if entreprise.logo %}
+                    <img src="{{ entreprise.logo.url }}" alt="Logo {{ entreprise.nom }}" class="navbar-logo">
+                {% else %}
+                    <span class="navbar-brand">{{ entreprise.nom }}</span>
+                {% endif %}
+                <a href="{% url 'entreprise_logout' %}" class="nav-btn logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </a>
+            </div>
+        </nav>
+        
+        <header class="dashboard-header">
+            {% if entreprise.logo %}
+                <img src="{{ entreprise.logo.url }}" alt="Logo {{ entreprise.nom }}" class="entreprise-logo">
+            {% endif %}
+            <div class="header-content">
+                <h1 class="header-title">Bienvenue, <span class="entreprise-name">{{ entreprise.nom }}</span></h1>
+                <p>Gérez vos offres et candidatures en toute simplicité</p>
+            </div>
+        </header>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-value">{{ offres_count|default:"0" }}</h3>
+                    <p class="stat-label">Offres publiées</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon success">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-value">{{ candidatures_count|default:"0" }}</h3>
+                    <p class="stat-label">Candidatures reçues</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon warning">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-value">{{ candidatures_pending|default:"0" }}</h3>
+                    <p class="stat-label">En attente</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-grid">
+            <div class="info-card">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h2 class="card-title">Informations de l'entreprise</h2>
+                </div>
+                <div class="info-content">
+                    <div class="info-item">
+                        <span class="info-label">Description</span>
+                        <span class="info-value">{{ entreprise.description }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ entreprise.email }}</span>
+                    </div>
+                    {% if entreprise.site_web %}
+                    <div class="info-item">
+                        <span class="info-label">Site web</span>
+                        <span class="info-value">{{ entreprise.site_web }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-section">
+            <h2 class="section-title"><i class="fas fa-tasks"></i> Actions rapides</h2>
+            <div class="nav-links">
+                <a href="{% url 'entreprise_liste_candidaturesss' %}" class="nav-link">
+                    <div class="link-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <span class="link-text">Gérer les candidatures</span>
+                </a>
+                <a href="{% url 'entreprise_offres' %}" class="nav-link">
+                    <div class="link-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <span class="link-text">Mes offres d'emploi</span>
+                </a>
+                <a href="{% url 'candidats_postules' %}" class="nav-link">
+                    <div class="link-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <span class="link-text">Candidatures spontanées</span>
+                </a>
+                <a href="{% url 'entreprise_logout' %}" class="nav-link">
+                    <div class="link-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                    <span class="link-text">Déconnexion</span>
+                </a>
+            </div>
+            <a href="{% url 'export_candidats' %}" class="export-link">
+                <i class="fas fa-file-export"></i> Exporter les candidats en CSV
+            </a>
+        </div>
+    </div>
+</body>
+</html>

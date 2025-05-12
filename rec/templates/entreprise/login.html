@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Entreprise</title>
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animate.css pour les animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="no-top-margin">
+    <div class="page-wrapper">
+        <!-- Barre de navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+          <div class="container">
+              <a class="navbar-brand" href="/">
+                  <img src="/media/logos/HingerV00.png" alt="Hinger" class="brand-logo">
+              </a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNav">
+                  <ul class="navbar-nav ms-auto">
+                      <li class="nav-item">
+                          <a class="nav-link custom-nav-button" href="/">
+                              <i class="fas fa-home me-1"></i> Accueil
+                          </a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link custom-nav-button" href="{% url 'entreprise_register' %}">
+                              <i class="fas fa-sign-in-alt me-1"></i> Inscription
+                          </a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </nav>
+
+        <!-- Contenu principal -->
+        <main class="main-content">
+            <div class="container animate__animated animate__fadeIn">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="card form-card">
+                            <!-- En-tête du formulaire -->
+                            <div class="card-header">
+                                <div class="header-content">
+                                    <div class="header-icon">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </div>
+                                    <div class="header-text">
+                                        <h3 class="form-title">Connexion Entreprise</h3>
+                                        <p class="form-subtitle">Accédez à votre espace pour gérer vos offres d'emploi</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Corps du formulaire -->
+                            <div class="card-body">
+                                <form method="post" class="custom-form" id="entrepriseLoginForm">
+                                    {% csrf_token %}
+                                    
+                                    <div class="form-section animate__animated animate__fadeInUp animation-delay-1">
+                                        {% for field in form %}
+                                            <div class="form-field-container">
+                                                <div class="form-group">
+                                                    <label for="{{ field.id_for_label }}" class="form-label">
+                                                        {{ field.label }}
+                                                        {% if field.field.required %}
+                                                            <span class="required-indicator">*</span>
+                                                        {% endif %}
+                                                    </label>
+                                                    {{ field }}
+                                                    {% if field.help_text %}
+                                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                                    {% endif %}
+                                                    {% if field.errors %}
+                                                        <div class="error-messages">
+                                                            {% for error in field.errors %}
+                                                                <div class="error-message">{{ error }}</div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <!-- Actions du formulaire -->
+                                    <div class="form-actions animate__animated animate__fadeInUp animation-delay-2">
+                                        <button type="submit" class="btn btn-primary btn-action button-animate">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                            <span class="btn-text">Se connecter</span>
+                                        </button>
+                                        <a href="{% url 'entreprise_register' %}" class="btn btn-outline-secondary btn-action button-animate">
+                                            <i class="fas fa-user-plus"></i>
+                                            <span class="btn-text">Créer un compte</span>
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #796acd;
+            --secondary-color: #f8f9fa;
+            --accent-color: #6c5ce7;
+            --text-color: #333;
+            --light-text: #6c757d;
+            --border-color: #e9ecef;
+            --success-color: #38c172;
+            --error-color: #e3342f;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0; 
+        }
+        
+        .no-top-margin {
+            margin-top: 0;
+        }
+        
+        * {
+            margin-top: 0;
+            box-sizing: border-box;
+        }
+        
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* Styles pour la barre de navigation */
+        .navbar {
+            background: linear-gradient(135deg, rgba(121, 106, 205, 0.9), rgba(121, 106, 205, 0.7));
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 0; /* Assurer qu'il n'y a pas de marge en haut */
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .brand-logo {
+            height: 60px;
+        }
+        
+        .custom-nav-button {
+          color: white !important;
+          font-weight: 500;
+          padding: 0.6rem 1.2rem !important;
+          transition: all 0.3s ease;
+          border-radius: 30px !important;
+          margin: 0 0.3rem;
+          background-color: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          display: flex;
+          align-items: center;
+      }
+
+      .custom-nav-button:hover {
+          color: white !important;
+          background-color: rgba(255, 255, 255, 0.25);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .custom-nav-button i {
+          margin-right: 5px;
+      }
+        
+        /* Styles pour le contenu principal */
+        .main-content {
+            flex: 1;
+            padding: 3rem 0;
+        }
+        
+        /* Styles pour la carte du formulaire */
+        .form-card {
+            border: none;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(121, 106, 205, 0.15);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            background-color: #ffffff;
+        }
+        
+        /* Styles pour l'en-tête du formulaire */
+        .card-header {
+            background: linear-gradient(135deg, rgba(121, 106, 205, 0.9), rgba(121, 106, 205, 0.7));
+            color: white;
+            border: none;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-icon {
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .form-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .form-subtitle {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        /* Styles pour le corps du formulaire */
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+            background-color: var(--secondary-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(121, 106, 205, 0.08);
+        }
+        
+        /* Styles pour les champs de formulaire */
+        .form-field-container {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .required-indicator {
+            color: var(--error-color);
+            margin-left: 3px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(121, 106, 205, 0.2);
+            outline: none;
+        }
+        
+        .error-messages {
+            margin-top: 0.5rem;
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* Styles pour les boutons d'action */
+        .form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+        }
+        
+        .btn-outline-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: rgba(121, 106, 205, 0.1);
+            color: var(--text-color);
+            transform: translateY(-2px);
+        }
+        
+        .btn-action i {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Animations */
+        .button-animate {
+            transition: all 0.3s ease;
+        }
+        
+        .button-animate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .animation-delay-1 {
+            animation-delay: 0.1s;
+        }
+        
+        .animation-delay-2 {
+            animation-delay: 0.2s;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card-header {
+                padding: 1.2rem;
+            }
+            
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .form-title {
+                font-size: 1.3rem;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .form-section {
+                padding: 1.2rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn-action {
+                width: 100%;
+            }
+        }
+    </style>
+</body>
+</html>

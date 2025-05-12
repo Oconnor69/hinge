@@ -1,0 +1,697 @@
+{% extends 'base.html' %}
+
+{% block title %}Candidature de {{ object.candidat }} | Détail{% endblock %}
+
+{% block page_title %}Détail de la candidature{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Accueil</a></li>
+<li class="breadcrumb-item"><a href="{% url 'candidature_list' %}">Candidatures</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ object.candidat }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="animate__animated animate__fadeIn">
+    <!-- En-tête de la candidature avec fond dégradé -->
+    <div class="candidature-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-file-signature"></i>
+            </div>
+            <div class="header-text">
+                <h2 class="header-title">Candidature de {{ object.candidat }}</h2>
+                <div class="header-subtitle">
+                    <div class="company-badge">
+                        <div class="avatar-circle bg-primary">
+                            {{ object.offre.entreprise.nom|first }}
+                        </div>
+                        <span>{{ object.offre.entreprise.nom }}</span>
+                    </div>
+                    
+                    <!-- Badges d'information -->
+                    <div class="badges-container">
+                        <div class="info-badge">
+                            <i class="fas fa-briefcase"></i>
+                            <span>{{ object.offre.type_contrat }}</span>
+                        </div>
+                        <div class="info-badge status-badge status-{{ object.statut|lower }}">
+                            <i class="fas {% if object.statut == 'EN_ATTENTE' %}fa-hourglass-half{% elif object.statut == 'ACCEPTEE' %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                            <span>{{ object.get_statut_display }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="action-buttons animate__animated animate__fadeInUp">
+            <a href="{% url 'candidature_update' object.pk %}" class="btn-action btn-edit button-animate">
+                <i class="fas fa-edit"></i>
+                <span>Modifier</span>
+            </a>
+            <a href="{% url 'candidature_delete' object.pk %}" class="btn-action btn-delete button-animate">
+                <i class="fas fa-trash-alt"></i>
+                <span>Supprimer</span>
+            </a>
+            <a href="{% url 'candidature_list' %}" class="btn-action btn-return button-animate">
+                <i class="fas fa-arrow-left"></i>
+                <span>Retour</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="candidature-detail-container">
+        <!-- Colonne d'informations du candidat -->
+        <div class="info-card">
+            <div class="card-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3>Profil du candidat</h3>
+                </div>
+                <div class="candidate-profile">
+                    <div class="candidate-avatar">
+                        {{ object.candidat.prenom|first }}{{ object.candidat.nom|first }}
+                    </div>
+                    <div class="candidate-info">
+                        <h4>{{ object.candidat.prenom }} {{ object.candidat.nom }}</h4>
+                        <div class="contact-details">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>{{ object.candidat.email }}</span>
+                            </div>
+                            {% if object.candidat.telephone %}
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ object.candidat.telephone }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% if object.candidat.cv %}
+                <div class="document-links">
+                    <a href="{{ object.candidat.cv.url }}" class="btn-document" target="_blank">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Voir le CV</span>
+                    </a>
+                    {% if object.candidat.certificat %}
+                    <a href="{{ object.candidat.certificat.url }}" class="btn-document" target="_blank">
+                        <i class="fas fa-certificate"></i>
+                        <span>Voir les certificats</span>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Qualifications</h3>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Niveau d'étude</div>
+                        <div class="info-value education-badge">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>{{ object.candidat.niveau_etude }}</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Expérience</div>
+                        <div class="info-value experience-badge">
+                            <i class="fas fa-briefcase"></i>
+                            <span>{{ object.candidat.annee_experience }} an{% if object.candidat.annee_experience > 1 %}s{% endif %}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne d'informations de l'offre -->
+        <div class="info-card">
+            <div class="card-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Détails de l'offre</h3>
+                </div>
+                <div class="job-details">
+                    <h4>{{ object.offre.titre }}</h4>
+                    <div class="info-badge-container">
+                        <div class="job-badge">
+                            <i class="fas fa-tag"></i>
+                            <span>{{ object.offre.get_categorie_display }}</span>
+                        </div>
+                        <div class="job-badge">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ object.offre.localisation }}</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'offre_detail' object.offre.pk %}" class="btn-link">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>Voir l'offre complète</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Chronologie</h3>
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-icon">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h5>Candidature soumise</h5>
+                            <div class="timeline-date">
+                                <i class="far fa-calendar"></i>
+                                <span>{{ object.date_postulation|date:"d/m/Y" }}</span>
+                            </div>
+                            <div class="timeline-time">
+                                <i class="far fa-clock"></i>
+                                <span>{{ object.date_postulation|date:"H:i" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon status-{{ object.statut|lower }}-icon">
+                            <i class="fas {% if object.statut == 'EN_ATTENTE' %}fa-hourglass-half{% elif object.statut == 'ACCEPTEE' %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h5>Statut actuel: {{ object.get_statut_display }}</h5>
+                            <div class="timeline-date">
+                                <span class="status-text-{{ object.statut|lower }}">
+                                {% if object.statut == 'EN_ATTENTE' %}
+                                    En attente de traitement
+                                {% elif object.statut == 'ACCEPTEE' %}
+                                    Candidature acceptée
+                                {% else %}
+                                    Candidature refusée
+                                {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* En-tête de la page avec fond dégradé */
+    .candidature-header {
+        background: linear-gradient(135deg, rgb(121, 106, 205, 0.9), rgb(121, 106, 205, 0.7));
+        border-radius: 16px;
+        padding: 2rem;
+        color: white;
+        box-shadow: 0 8px 20px rgba(121, 106, 205, 0.2);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .candidature-header::before, .candidature-header::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .candidature-header::before {
+        width: 200px;
+        height: 200px;
+        top: -80px;
+        right: -50px;
+    }
+    
+    .candidature-header::after {
+        width: 150px;
+        height: 150px;
+        bottom: -60px;
+        left: -40px;
+    }
+    
+    .header-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .header-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        flex-shrink: 0;
+    }
+    
+    .header-title {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-subtitle {
+        margin-top: 0.8rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .company-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 1rem;
+    }
+    
+    .avatar-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .badges-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .info-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        font-size: 0.85rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .status-badge {
+        font-weight: 600;
+    }
+    
+    .status-en_attente {
+        background-color: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+    }
+    
+    .status-acceptee {
+        background-color: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+    
+    .status-refusee {
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+    }
+    
+    /* Boutons d'action */
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .btn-action {
+        padding: 0.7rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-action i {
+        font-size: 1rem;
+    }
+    
+    .btn-edit {
+        background-color: #ff9800;
+        color: white;
+    }
+    
+    .btn-edit:hover {
+        background-color: #f57c00;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(245, 124, 0, 0.3);
+        color: white;
+    }
+    
+    .btn-delete {
+        background-color: #f44336;
+        color: white;
+    }
+    
+    .btn-delete:hover {
+        background-color: #e53935;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(229, 57, 53, 0.3);
+        color: white;
+    }
+    
+    .btn-return {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn-return:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        color: white;
+    }
+    
+    /* Layout conteneur principal */
+    .candidature-detail-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    @media (max-width: 992px) {
+        .candidature-detail-container {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Cartes d'informations */
+    .info-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+    
+    .card-section {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    }
+    
+    .card-section:last-child {
+        border-bottom: none;
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .section-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(121, 106, 205, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgb(121, 106, 205);
+        font-size: 1rem;
+    }
+    
+    .section-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #444;
+    }
+    
+    /* Profil du candidat */
+    .candidate-profile {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .candidate-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgb(121, 106, 205, 0.9), rgb(121, 106, 205, 0.7));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .candidate-info h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .contact-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+    
+    .document-links {
+        display: flex;
+        gap: 0.8rem;
+        margin-top: 1rem;
+    }
+    
+    .btn-document {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        background-color: rgba(121, 106, 205, 0.1);
+        color: rgb(121, 106, 205);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-document:hover {
+        background-color: rgba(121, 106, 205, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    /* Grille d'informations */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .info-value {
+        font-weight: 500;
+        color: #333;
+    }
+    
+    /* Badges */
+    .education-badge, .experience-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+    }
+    
+    .education-badge {
+        background-color: rgba(121, 106, 205, 0.1);
+        color: rgb(121, 106, 205);
+    }
+    
+    .experience-badge {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    /* Détails de l'offre */
+    .job-details h4 {
+        margin: 0 0 0.8rem 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .info-badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .job-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        background-color: rgba(121, 106, 205, 0.1);
+        color: rgb(121, 106, 205);
+        font-size: 0.85rem;
+    }
+    
+    .btn-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgb(121, 106, 205);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-link:hover {
+        text-decoration: underline;
+    }
+    
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 15px;
+        width: 2px;
+        height: 100%;
+        background-color: #e9ecef;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .timeline-icon {
+        position: absolute;
+        left: -2rem;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: rgb(121, 106, 205);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.8rem;
+        z-index: 1;
+    }
+    
+    .status-en_attente-icon {
+        background-color: #ffc107;
+    }
+    
+    .status-acceptee-icon {
+        background-color: #28a745;
+    }
+    
+    .status-refusee-icon {
+        background-color: #dc3545;
+    }
+    
+    .timeline-content {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    
+    .timeline-content h5 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    
+    .timeline-date, .timeline-time {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .status-text-en_attente {
+        color: #ffc107;
+        font-weight: 500;
+    }
+    
+    .status-text-acceptee {
+        color: #28a745;
+        font-weight: 500;
+    }
+    
+    .status-text-refusee {
+        color: #dc3545;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}

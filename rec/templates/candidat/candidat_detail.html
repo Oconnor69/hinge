@@ -1,0 +1,570 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ candidat.prenom }} {{ candidat.nom }} | Détail du candidat{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Accueil</a></li>
+<li class="breadcrumb-item"><a href="{% url 'candidat_list' %}">Candidats</a></li>
+<li class="breadcrumb-item active">{{ candidat.prenom }} {{ candidat.nom }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="animate__animated animate__fadeIn">
+    <!-- En-tête de la page avec fond dégradé -->
+    <div class="candidat-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="header-text">
+                <h2 class="header-title">{{ candidat.prenom }} {{ candidat.nom }}</h2>
+                <div class="header-subtitle">
+                    <div class="badges-container">
+                        <div class="info-badge">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>{{ candidat.niveau_etude }}</span>
+                        </div>
+                        <div class="info-badge">
+                            <i class="fas fa-briefcase"></i>
+                            <span>{{ candidat.annee_experience }} an(s) d'expérience</span>
+                        </div>
+                        <div class="info-badge">
+                            <i class="fas fa-venus-mars"></i>
+                            <span>{{ candidat.sexe }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boutons d'action -->
+        <div class="action-buttons">
+            <a href="{% url 'candidat_update' candidat.pk %}" class="btn-action btn-edit button-animate">
+                <i class="fas fa-edit"></i>
+                <span>Modifier</span>
+            </a>
+            <a href="{% url 'candidat_delete' candidat.pk %}" class="btn-action btn-delete button-animate">
+                <i class="fas fa-trash-alt"></i>
+                <span>Supprimer</span>
+            </a>
+            <a href="{% url 'candidat_list' %}" class="btn-action btn-return button-animate">
+                <i class="fas fa-arrow-left"></i>
+                <span>Retour</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="candidat-content">
+        <!-- Section Informations personnelles -->
+        <div class="content-section animate__animated animate__fadeInUp animation-delay-1">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-address-card"></i>
+                </div>
+                <h2 class="section-title">Informations personnelles</h2>
+            </div>
+            <div class="section-body">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-envelope"></i>
+                            <span>Email</span>
+                        </div>
+                        <div class="info-value">
+                            <a href="mailto:{{ candidat.email }}">{{ candidat.email }}</a>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-phone"></i>
+                            <span>Téléphone</span>
+                        </div>
+                        <div class="info-value">
+                            <a href="tel:{{ candidat.telephone }}">{{ candidat.telephone }}</a>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Adresse</span>
+                        </div>
+                        <div class="info-value">{{ candidat.adresse|default:"Non renseignée" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-birthday-cake"></i>
+                            <span>Date de naissance</span>
+                        </div>
+                        <div class="info-value">{{ candidat.date_naissance|date:"d F Y" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Documents -->
+        <div class="content-section animate__animated animate__fadeInUp animation-delay-2">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h2 class="section-title">Documents</h2>
+            </div>
+            <div class="section-body">
+                <div class="documents-container">
+                    {% if candidat.cv %}
+                    <div class="document-card">
+                        <div class="document-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="document-info">
+                            <div class="document-title">Curriculum Vitae</div>
+                            <a href="{{ candidat.cv.url }}" download class="document-link button-animate">
+                                <i class="fas fa-download"></i>
+                                <span>Télécharger</span>
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="document-card empty">
+                        <div class="document-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="document-info">
+                            <div class="document-title">Curriculum Vitae</div>
+                            <div class="document-empty">Aucun CV disponible</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if candidat.certificat %}
+                    <div class="document-card">
+                        <div class="document-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="document-info">
+                            <div class="document-title">Certificat</div>
+                            <a href="{{ candidat.certificat.url }}" download class="document-link button-animate">
+                                <i class="fas fa-download"></i>
+                                <span>Télécharger</span>
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="document-card empty">
+                        <div class="document-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="document-info">
+                            <div class="document-title">Certificat</div>
+                            <div class="document-empty">Aucun certificat disponible</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* En-tête de la page avec fond dégradé */
+    .candidat-header {
+        background: linear-gradient(135deg, rgb(121, 106, 205, 0.9), rgb(121, 106, 205, 0.7));
+        border-radius: 16px;
+        padding: 2rem;
+        color: white;
+        box-shadow: 0 8px 20px rgba(121, 106, 205, 0.2);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .candidat-header::before, .candidat-header::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .candidat-header::before {
+        width: 200px;
+        height: 200px;
+        top: -80px;
+        right: -50px;
+    }
+    
+    .candidat-header::after {
+        width: 150px;
+        height: 150px;
+        bottom: -60px;
+        left: -40px;
+    }
+    
+    .header-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .header-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        flex-shrink: 0;
+    }
+    
+    .header-title {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-subtitle {
+        margin-top: 0.8rem;
+    }
+    
+    .badges-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .info-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        font-size: 0.85rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Boutons d'action */
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .btn-action {
+        padding: 0.7rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-action i {
+        font-size: 1rem;
+    }
+    
+    .btn-edit {
+        background-color: #ff9800;
+        color: white;
+    }
+    
+    .btn-edit:hover {
+        background-color: #f57c00;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(245, 124, 0, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-delete {
+        background-color: #f5365c;
+        color: white;
+    }
+    
+    .btn-delete:hover {
+        background-color: #e42a50;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(245, 54, 92, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-return {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn-return:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        color: white;
+        text-decoration: none;
+    }
+    
+    /* Contenu principal */
+    .candidat-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    /* Sections */
+    .content-section {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .content-section:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(121, 106, 205, 0.15);
+    }
+    
+    .section-header {
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .section-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background-color: rgba(121, 106, 205, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    
+    .section-title {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .section-body {
+        padding: 1.5rem;
+    }
+    
+    /* Grille d'informations */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .info-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6c757d;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .info-label i {
+        color: var(--primary-color);
+        opacity: 0.8;
+    }
+    
+    .info-value {
+        font-size: 1rem;
+        color: #333;
+        font-weight: 500;
+    }
+    
+    .info-value a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    
+    .info-value a:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+    
+    /* Documents */
+    .documents-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .document-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.2rem;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+    
+    .document-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .document-card.empty {
+        background-color: #f8f9fa;
+        opacity: 0.7;
+        border: 1px dashed #ced4da;
+    }
+    
+    .document-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 8px;
+        background-color: rgba(121, 106, 205, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    
+    .document-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .document-title {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.95rem;
+    }
+    
+    .document-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        background-color: rgba(121, 106, 205, 0.1);
+        color: var(--primary-color);
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        width: fit-content;
+    }
+    
+    .document-link:hover {
+        background-color: var(--primary-color);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .document-empty {
+        font-size: 0.8rem;
+        color: #6c757d;
+        font-style: italic;
+    }
+    
+    /* Animation des boutons */
+    .button-animate {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .button-animate::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.4s ease-in-out;
+        z-index: -1;
+    }
+    
+    .button-animate:hover::before {
+        left: 0;
+        width: 100%;
+    }
+    
+    .button-animate:active {
+        transform: scale(0.97) !important;
+        transition: transform 0.1s;
+    }
+    
+    /* Délais d'animation */
+    .animation-delay-1 {
+        animation-delay: 0.3s;
+    }
+    
+    .animation-delay-2 {
+        animation-delay: 0.5s;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+        }
+        
+        .header-subtitle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .badges-container {
+            justify-content: center;
+        }
+        
+        .action-buttons {
+            justify-content: center;
+        }
+        
+        .info-grid,
+        .documents-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

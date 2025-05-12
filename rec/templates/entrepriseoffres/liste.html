@@ -1,0 +1,467 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Offres d'Emploi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #796ACD;
+            --primary-dark: #6457B5;
+            --primary-light: #8F82D9;
+            --primary-lighter: #A095E1;
+            --primary-gradient: linear-gradient(145deg, #8a77dd, #6457B5);
+            --secondary-color: #f7fafc;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #2dce89;
+            --info-color: #11cdef;
+            --warning-color: #fb6340;
+            --danger-color: #f5365c;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Barre de navigation moderne */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 1rem;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        
+        .navbar-brand {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            position: relative;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            background: rgba(121, 106, 205, 0.08);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 3px 10px rgba(121, 106, 205, 0.1);
+            transition: var(--transition);
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+        }
+        
+        .back-btn:hover {
+            background-color: var(--gray-300);
+            color: var(--gray-900);
+            transform: translateX(-3px);
+        }
+
+        /* Header avec effet de gradient */
+        .dashboard-header {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before, 
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dashboard-header::before {
+            width: 250px;
+            height: 250px;
+            top: -100px;
+            right: -70px;
+        }
+
+        .dashboard-header::after {
+            width: 200px;
+            height: 200px;
+            bottom: -80px;
+            left: -60px;
+        }
+
+        .header-content {
+            z-index: 1;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .btn-create {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .btn-create:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        /* Liste des offres */
+        .offres-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .offre-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid var(--gray-200);
+        }
+
+        .offre-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(121, 106, 205, 0.15);
+        }
+
+        .offre-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .offre-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background-color: rgba(121, 106, 205, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.4rem;
+        }
+
+        .offre-title {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .offre-category {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .offre-body {
+            padding: 1.5rem;
+        }
+
+        .offre-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-icon {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            width: 20px;
+        }
+
+        .detail-text {
+            font-size: 0.95rem;
+            color: var(--gray-700);
+        }
+
+        .offre-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn-edit {
+            background-color: rgba(45, 206, 137, 0.1);
+            color: var(--success-color);
+        }
+
+        .btn-edit:hover {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: rgba(245, 54, 92, 0.1);
+            color: var(--danger-color);
+        }
+
+        .btn-delete:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* État vide */
+        .empty-state {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            margin: 2rem 0;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: rgba(121, 106, 205, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--gray-800);
+        }
+
+        .empty-text {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .btn-create {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .offres-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="navbar">
+            <div class="navbar-left">
+                <a href="{% url 'entreprise_dashboard' %}" class="nav-btn back-btn">
+                    <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+                </a>
+            </div>
+        </nav>
+        
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1 class="header-title">Mes Offres d'Emploi</h1>
+                <p class="header-subtitle">Gérez vos offres d'emploi et suivez les candidatures</p>
+            </div>
+            <a href="{% url 'entreprise_creer_offre' %}" class="btn-create">
+                <i class="fas fa-plus-circle"></i>
+                <span>Nouvelle offre</span>
+            </a>
+        </header>
+
+        {% if offres %}
+            <div class="offres-container">
+                {% for offre in offres %}
+                    <div class="offre-card">
+                        <div class="offre-header">
+                            <div class="offre-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div>
+                                <h3 class="offre-title">{{ offre.titre }}</h3>
+                                <span class="offre-category">{{ offre.categorie }}</span>
+                            </div>
+                        </div>
+                        <div class="offre-body">
+                            <div class="offre-details">
+                                {% if offre.type_contrat %}
+                                <div class="detail-item">
+                                    <i class="fas fa-file-contract detail-icon"></i>
+                                    <span class="detail-text">{{ offre.type_contrat }}</span>
+                                </div>
+                                {% endif %}
+                                {% if offre.localisation %}
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt detail-icon"></i>
+                                    <span class="detail-text">{{ offre.localisation }}</span>
+                                </div>
+                                {% endif %}
+                                {% if offre.date_publication %}
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-alt detail-icon"></i>
+                                    <span class="detail-text">Publiée le {{ offre.date_publication|date:"d/m/Y" }}</span>
+                                </div>
+                                {% endif %}
+                                {% if offre.date_expiration %}
+                                <div class="detail-item">
+                                    <i class="fas fa-clock detail-icon"></i>
+                                    <span class="detail-text">Expire le {{ offre.date_expiration|date:"d/m/Y" }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="offre-actions">
+                                <a href="{% url 'entreprise_modifier_offre' offre.id %}" class="btn-action btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Modifier</span>
+                                </a>
+                                <a href="{% url 'entreprise_supprimer_offre' offre.id %}" class="btn-action btn-delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span>Supprimer</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <h3 class="empty-title">Aucune offre disponible</h3>
+                <p class="empty-text">Commencez par créer une nouvelle offre d'emploi.</p>
+                <a href="{% url 'entreprise_creer_offre' %}" class="btn-create">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Ajouter une offre</span>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HINGER Header</title>
+    <link rel="stylesheet" href="{% static 'rec/css/style.css' %}">
+    <link href="https://fonts.cdnfonts.com/css/aguarita" rel="stylesheet">
+</head>
+
+<body>
+    <header id="mainHeader">
+        <div class="header-container">
+            <div class="header_block1">
+                <a href="{% url 'home' %}" class="logo-link">
+                    <h1>HINGER</h1>
+                </a>
+                <nav class="links">
+                    <a href="#">Find Talent</a>
+                    <a href="#">Find Work</a>
+                    <a href="#">Why Hinge</a>
+                    <a href="#">Enterprise</a>
+                </nav>
+            </div>
+            <div class="header_block2">
+                <a href="{% url 'login' %}" class="btn btn-login">Login</a>
+                <a href="{% url 'signup' %}" class="btn btn-signup">Signup</a>
+            </div>
+        </div>
+    </header>
+ 
+    <section class="section-container">
+        <div class="left-block">
+            <h1 class="section-title11">
+                Ici, vous pouvez trouver des <span class="highlight">experts</span> avec qui vous voulez travailler
+            </h1>
+            <p class="section-para">
+                Notre mission, qui consiste à créer des opportunités économiques afin que les gens aient une vie meilleure,
+                nous a amené bien plus loin
+            </p>
+
+            <div class="search-container">
+                <div class="search-box">
+                    <img src="{% static 'rec/img/26aee85832fe07b1f3761b48a8ab07f6.png' %}" class="search-icon" alt="Rechercher">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search">
+                    <img src="{% static 'rec/img/close - Copy.png' %}" class="close-icon" alt="Effacer">
+
+                    <div class="dropdown-btn" id="dropdownBtn">
+                        Talents <img src="{% static 'rec/img/down-arrow.png' %}" alt="Flèche">
+                    </div>
+                </div>
+
+                <div class="dropdowns-container">
+                    <div class="search-results hidden" id="searchResults">
+                        <!-- Les résultats de recherche apparaîtront ici -->
+                    </div>
+
+                    <div class="dropdown-content hidden" id="selectionDropdown">
+                        <div class="dropdown-item" data-value="Talents">Talents</div>
+                        <div class="dropdown-item" data-value="Jobs">Jobs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-block">
+            <div>
+                <img src="{% static 'rec/img/Frame 165.png' %}" class="under-person" alt="">
+                <img src="{% static 'rec/img/Ikbal 5.png' %}" class="person" alt="">
+            </div>
+            <img src="{% static 'rec/img/Other 07.png' %}" class="shape1" alt="">
+            <img src="{% static 'rec/img/Other 15.png' %}" class="shape2" alt="">
+            <img src="{% static 'rec/img/Other 20.png' %}" class="shape3" alt="">
+            <img src="{% static 'rec/img/Other 15.png' %}" class="shape4" alt="">
+        </div>
+    </section>
+
+    <div class="bottom-image-container">
+        <img src="{% static 'rec/img/Frame 29.png' %}" class="shape5" alt="Decoration">
+    </div>
+
+    <section class="improvement-section">
+        <div class="content-wrapper">
+            <div class="content">
+                <h4 class="section-title000">Améliorez votre projet professionnel sans effort</h4>
+                <ul class="benefits-list">
+                    <li class="benefit-item">
+                        <img src="{% static 'rec/img/pencil.png' %}" class="benefit-icon" alt="Icône crayon">
+                        <span>Rejoignez HINGE gratuitement pour accéder à un pool diversifié de professionnels qualifiés</span>
+                    </li>
+                    <li class="benefit-item">
+                        <img src="{% static 'rec/img/research.png' %}" class="benefit-icon" alt="Icône recherche">
+                        <span>Simplifiez votre processus de recrutement en publiant une offre d'emploi ou en laissant HINGE trouver la personne idéale pour vous</span>
+                    </li>
+                    <li class="benefit-item">
+                        <img src="{% static 'rec/img/ranking.png' %}" class="benefit-icon" alt="Icône classement">
+                        <span>Collaborez avec des talents de haut niveau sans grever votre budget, grâce aux options abordables d'HINGE et aux taux de transaction minimaux</span>
+                    </li>
+                </ul>
+            </div>
+            <img src="{% static 'rec/img/Object 2.png' %}" class="illustration" alt="Homme assis travaillant">
+        </div>
+    </section>
+
+    <section class="talent-categories">
+        <h4 class="section-title00">Rechercher des talents par catégorie</h4>
+        <div class="skills-container" id="skillsContainer"></div>
+    </section>
+
+    <section class="talent-section">
+        <div class="content-block">
+            <h4 class="section-title">Trouver des talents Ta façon</h4>
+            <p class="section-description">
+                Travaillez avec le plus grand réseau de professionnels indépendants et faites avancer les choses, 
+                depuis des délais d'exécution rapides jusqu'à de grandes transformations
+            </p>
+            <div class="features-container">
+                <div class="feature-block">
+                    <p class="feature-text">Publiez une offre d'emploi engagez un pro</p>
+                    <!-- SVG inchangé -->
+                </div>
+                <div class="feature-block">
+                    <p class="feature-text">Naviguer et acheter un projet</p>
+                </div>
+                <div class="feature-block">
+                    <p class="feature-text">Obtenir les conseils d'un expert du secteur</p>
+                </div>
+            </div>
+        </div>
+        <div class="image-block">
+            <img src="{% static 'rec/img/marni 1.png' %}" alt="Professionnel travaillant">
+        </div>
+    </section>
+
+    <section class="opportunities-section-unique">
+        <div class="opportunities-image-unique">
+            <img src="{% static 'rec/img/06 1.svg' %}" alt="Illustration travail freelance">
+        </div>
+        <div class="opportunities-content-unique">
+            <h4 class="opportunities-title-unique">Trouvez un travail génial</h4>
+            <p class="opportunities-desc-unique">
+                Rencontrez des clients avec lesquels vous avez hâte de travailler et prenez
+                votre carrière ou votre entreprise vers de nouveaux sommets
+            </p>
+            <div class="opportunities-features-unique">
+                <div class="opportunity-card-unique">
+                    <img src="{% static 'rec/img/Group 14.svg' %}" alt="Opportunités de carrière">
+                    <h6 class="opportunity-text-unique">Trouvez des opportunités pour chaque étape de votre carrière freelance</h6>
+                </div>
+                <div class="opportunity-card-unique">
+                    <img src="{% static 'rec/img/Group 11.svg' %}" alt="Flexibilité professionnelle">
+                    <h6 class="opportunity-text-unique">Contrôlez où, quand et comment vous travaillez</h6>
+                </div>
+                <div class="opportunity-card-unique">
+                    <img src="{% static 'rec/img/Group 13.png' %}" alt="Revenus multiples">
+                    <h6 class="opportunity-text-unique">Découvrez différentes manières de gagner</h6>
+                </div>
+            </div>
+            <button class="opportunities-btn-unique">Trouver des opportunités</button>
+        </div>
+    </section>
+
+    <footer class="footer-container-unique">
+        <div class="footer-grid-unique">
+            <div class="footer-links-grid-unique">
+                <!-- Liens inchangés -->
+            </div>
+            <div class="footer-card-unique">
+                <div class="footer-card-header-unique">
+                    <div>
+                        <h3>HINGE</h3>
+                        <p>@HINGE_APP</p>
+                    </div>
+                    <div class="footer-card-logo-unique">
+                        <img src="{% static 'rec/img/HINGE.png' %}" alt="HINGE Logo">
+                    </div>
+                    <div class="footer-card-social-unique">
+                        <img src="{% static 'rec/img/twitter.svg' %}" alt="Twitter">
+                    </div>
+                </div>
+                <p class="footer-card-text-unique">
+                    We've just announced new features that would help you increase votre expérience d'utilisation !
+                </p>
+            </div>
+            <div class="footer-bottom-unique">
+                <div class="footer-logo-unique">
+                    <img src="{% static 'rec/img/HINGE.png' %}" alt="HINGE Logo">
+                    <p>HINGE, 2024</p>
+                </div>
+                <div class="footer-social-icons-unique">
+                    <img src="{% static 'rec/img/Instagram.png' %}" alt="Instagram">
+                    <img src="{% static 'rec/img/facebook.svg' %}" alt="Facebook">
+                    <img src="{% static 'rec/img/twitter.svg' %}" alt="Twitter">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Ton JavaScript reste inchangé
+    </script>
+</body>
+</html>

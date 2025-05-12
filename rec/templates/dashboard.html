@@ -1,0 +1,1017 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord | Gestion des Candidatures{% endblock %}
+
+{% block page_title %}Tableau de bord{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Accueil</a></li>
+<li class="breadcrumb-item active" aria-current="page">Tableau de bord</li>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container animate__animated animate__fadeIn">
+    <!-- Bannière de bienvenue -->
+    <div class="welcome-banner animate__animated animate__fadeInDown">
+        <div class="banner-content">
+            <h1>Bienvenue sur votre tableau de bord</h1>
+            <p>Suivez l'activité de votre plateforme de recrutement en temps réel</p>
+        </div>
+    </div>
+
+    <!-- Cartes de statistiques -->
+    <div class="stats-grid">
+        <!-- Carte Entreprises -->
+        <div class="stat-card animate__animated animate__zoomIn" style="animation-delay: 0.1s;">
+            <div class="stat-header">
+                <div class="stat-icon-container info">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="stat-title">Entreprises</div>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ total_entreprises }}</div>
+                <div class="stat-description">entreprises enregistrées</div>
+            </div>
+            <div class="stat-footer">
+                <div class="stat-progress">
+                    <div class="progress-bar" style="width: 100%; background-color: rgba(66, 153, 225, 0.5);"></div>
+                </div>
+                <a href="{% url 'entreprise_list' %}" class="stat-link">
+                    <span>Voir la liste</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Carte Offres -->
+        <div class="stat-card animate__animated animate__zoomIn" style="animation-delay: 0.2s;">
+            <div class="stat-header">
+                <div class="stat-icon-container success">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="stat-title">Offres</div>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ total_offres }}</div>
+                <div class="stat-description">offres d'emploi actives</div>
+            </div>
+            <div class="stat-footer">
+                <div class="stat-progress">
+                    <div class="progress-bar" style="width: 100%; background-color: rgba(72, 187, 120, 0.5);"></div>
+                </div>
+                <a href="{% url 'offre_list' %}" class="stat-link">
+                    <span>Voir la liste</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Carte Candidats -->
+        <div class="stat-card animate__animated animate__zoomIn" style="animation-delay: 0.3s;">
+            <div class="stat-header">
+                <div class="stat-icon-container primary">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-title">Candidats</div>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ total_candidats }}</div>
+                <div class="stat-description">candidats inscrits</div>
+            </div>
+            <div class="stat-footer">
+                <div class="stat-progress">
+                    <div class="progress-bar" style="width: 100%; background-color: rgba(121, 106, 205, 0.5);"></div>
+                </div>
+                <a href="{% url 'candidat_list' %}" class="stat-link">
+                    <span>Voir la liste</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Carte Candidatures -->
+        <div class="stat-card animate__animated animate__zoomIn" style="animation-delay: 0.4s;">
+            <div class="stat-header">
+                <div class="stat-icon-container warning">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="stat-title">Candidatures</div>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ total_candidatures }}</div>
+                <div class="stat-description">candidatures reçues</div>
+            </div>
+            <div class="stat-footer">
+                <div class="stat-progress">
+                    <div class="progress-bar" style="width: 100%; background-color: rgba(251, 99, 64, 0.5);"></div>
+                </div>
+                <a href="{% url 'candidature_list' %}" class="stat-link">
+                    <span>Voir la liste</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deux colonnes principales -->
+    <div class="dashboard-grid">
+        <!-- Première colonne -->
+        <div class="dashboard-column animate__animated animate__fadeInLeft" style="animation-delay: 0.5s;">
+            <!-- Offres récentes -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="header-left">
+                        <div class="header-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h2 class="card-title">Dernières offres</h2>
+                    </div>
+                    <a href="{% url 'offre_list' %}" class="btn-action btn-view button-animate">
+                        <span>Voir toutes</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% for offre in offres_recentes %}
+                    <div class="list-item">
+                        <div class="item-content">
+                            <div class="item-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div class="item-details">
+                                <a href="{% url 'offre_detail' pk=offre.pk %}" class="item-title">
+                                    {{ offre.titre }}
+                                </a>
+                                <div class="item-subtitle">
+                                    <i class="fas fa-building me-1"></i>{{ offre.entreprise.nom }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-meta">
+                            <span class="item-date">
+                                <i class="fas fa-calendar-alt me-1"></i>{{ offre.date_publication|date:"d/m/Y" }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Offres expirant bientôt -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="header-left">
+                        <div class="header-icon warning">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h2 class="card-title">Offres expirant bientôt</h2>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if offres_expirant %}
+                    {% for offre in offres_expirant %}
+                    <div class="list-item">
+                        <div class="item-content">
+                            <div class="item-icon warning">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <div class="item-details">
+                                <a href="{% url 'offre_detail' pk=offre.pk %}" class="item-title">
+                                    {{ offre.titre }}
+                                </a>
+                                <div class="item-subtitle">
+                                    <i class="fas fa-building me-1"></i>{{ offre.entreprise.nom }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-meta">
+                            <span class="item-date text-danger">
+                                <i class="fas fa-calendar-times me-1"></i>Expire le {{ offre.date_expiration|date:"d/m/Y" }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <p class="empty-text">Aucune offre n'expire dans les 7 prochains jours.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Deuxième colonne -->
+        <div class="dashboard-column animate__animated animate__fadeInRight" style="animation-delay: 0.5s;">
+            <!-- Candidatures récentes -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="header-left">
+                        <div class="header-icon primary">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h2 class="card-title">Dernières candidatures</h2>
+                    </div>
+                    <a href="{% url 'candidature_list' %}" class="btn-action btn-view button-animate">
+                        <span>Voir toutes</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% for candidature in candidatures_recentes %}
+                    <div class="list-item">
+                        <div class="item-content">
+                            <div class="item-avatar">
+                                {{ candidature.candidat.prenom|first }}{{ candidature.candidat.nom|first }}
+                            </div>
+                            <div class="item-details">
+                                <div class="item-title">{{ candidature.candidat.prenom }} {{ candidature.candidat.nom }}</div>
+                                <div class="item-subtitle">
+                                    <a href="{% url 'offre_detail' pk=candidature.offre.pk %}">
+                                        <i class="fas fa-briefcase me-1"></i>{{ candidature.offre.titre }}
+                                    </a>
+                                </div>
+                                <div class="item-meta-info">
+                                    <i class="fas fa-clock me-1"></i>{{ candidature.date_postulation|date:"d/m/Y H:i" }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-status">
+                            {% if candidature.statut == 'EN_ATTENTE' %}
+                            <span class="status-badge status-pending">
+                                <i class="fas fa-hourglass-half me-1"></i>{{ candidature.get_statut_display }}
+                            </span>
+                            {% elif candidature.statut == 'ACCEPTEE' %}
+                            <span class="status-badge status-approved">
+                                <i class="fas fa-check me-1"></i>{{ candidature.get_statut_display }}
+                            </span>
+                            {% else %}
+                            <span class="status-badge status-rejected">
+                                <i class="fas fa-times me-1"></i>{{ candidature.get_statut_display }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Graphique des candidatures -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="header-left">
+                        <div class="header-icon info">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h2 class="card-title">Statut des candidatures</h2>
+                    </div>
+                </div>
+                <div class="card-body chart-body">
+                    <div class="chart-container" data-aos="zoom-in">
+                        <canvas id="candidaturesChart"></canvas>
+                    </div>
+                    <div class="chart-legend">
+                        {% for stat in stats_candidatures %}
+                        <div class="legend-item">
+                            <div class="legend-color 
+                                {% if stat.statut == 'EN_ATTENTE' %}color-pending
+                                {% elif stat.statut == 'ACCEPTEE' %}color-approved
+                                {% else %}color-rejected{% endif %}">
+                            </div>
+                            <div class="legend-text">{{ stat.get_statut_display }} ({{ stat.total }})</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Variables et utilitaires */
+    :root {
+        --primary-color: #796acd;
+        --info-color: #4299e1;
+        --success-color: #48bb78;
+        --warning-color: #fb6340;
+        --danger-color: #f5365c;
+        --light-bg: #f8f9fe;
+        --card-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+
+    /* Conteneur principal */
+    .dashboard-container {
+        padding: 1rem 0;
+    }
+
+    /* Bannière de bienvenue */
+    .welcome-banner {
+        background: linear-gradient(120deg, var(--primary-color), #a095e1);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+    }
+
+    .welcome-banner::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .banner-content {
+        max-width: 100%;
+    }
+
+    .banner-content h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .banner-content p {
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+
+    /* Barre de recherche */
+    .search-box {
+        height: 3.2em;
+        border-radius: 2em;
+        border: 2px solid rgba(121, 106, 205, 0.7);
+        display: flex;
+        align-items: center;
+        background-color: white;
+        box-shadow: 0 4px 12px rgba(121, 106, 205, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .search-box:focus-within {
+        border-color: #796ACD;
+        box-shadow: 0 4px 16px rgba(121, 106, 205, 0.2);
+    }
+    
+    .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        margin: 0 1em;
+        color: rgba(121, 106, 205, 0.9);
+        font-size: 1rem;
+        font-weight: 500;
+        background: transparent;
+    }
+    
+    .search-input::placeholder {
+        color: rgba(121, 106, 205, 0.6);
+        font-weight: 500;
+    }
+    
+    .search-icon {
+        margin-left: 1.5em;
+        color: rgba(121, 106, 205, 0.7);
+        font-size: 1rem;
+    }
+
+    /* Grille de statistiques */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Nouvelle carte statistique moderne */
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(121, 106, 205, 0.15);
+        border-color: rgba(121, 106, 205, 0.1);
+    }
+
+    .stat-header {
+        display: flex;
+        align-items: center;
+        padding: 1.5rem 1.5rem 0.8rem;
+    }
+
+    .stat-icon-container {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.3rem;
+        color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon-container.primary { background: linear-gradient(135deg, var(--primary-color), #9B8BDB); }
+    .stat-icon-container.info { background: linear-gradient(135deg, var(--info-color), #63B3ED); }
+    .stat-icon-container.success { background: linear-gradient(135deg, var(--success-color), #68D391); }
+    .stat-icon-container.warning { background: linear-gradient(135deg, var(--warning-color), #FBD38D); }
+
+    .stat-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #718096;
+    }
+
+    .stat-content {
+        padding: 0.5rem 1.5rem 1.5rem;
+    }
+
+    .stat-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #2D3748;
+        line-height: 1.2;
+    }
+
+    .stat-description {
+        color: #A0AEC0;
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+    }
+
+    .stat-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.03);
+        background-color: rgba(247, 250, 252, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .stat-progress {
+        height: 4px;
+        background-color: #EDF2F7;
+        border-radius: 2px;
+        overflow: hidden;
+        width: 60px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 1s ease-in-out;
+    }
+
+    .stat-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary-color);
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .stat-link:hover {
+        color: #5D48B6;
+        transform: translateX(3px);
+    }
+
+    /* Grille principale du tableau de bord */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .dashboard-column {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    /* Cartes du tableau de bord */
+    .dashboard-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        transition: var(--transition);
+    }
+
+    .dashboard-card:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+    }
+
+    .header-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .header-icon.warning { background-color: var(--warning-color); }
+    .header-icon.primary { background-color: var(--primary-color); }
+    .header-icon.info { background-color: var(--info-color); }
+    .header-icon.success { background-color: var(--success-color); }
+
+    .card-title {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .btn-action {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-view {
+        background-color: rgba(121, 106, 205, 0.1);
+        color: var(--primary-color);
+    }
+    
+    .btn-view:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(121, 106, 205, 0.3);
+        text-decoration: none;
+    }
+    
+    .button-animate {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .button-animate::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120%;
+        height: 0;
+        padding-bottom: 120%;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .button-animate:active::after {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+        transition: 0s;
+    }
+    
+    .view-all-btn {
+        display: none;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
+    /* Liste d'éléments */
+    .list-item {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: var(--transition);
+    }
+
+    .list-item:last-child {
+        border-bottom: none;
+    }
+
+    .list-item:hover {
+        background-color: rgba(0, 0, 0, 0.01);
+    }
+
+    .item-content {
+        display: flex;
+        align-items: center;
+    }
+
+    .item-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background-color: rgba(66, 153, 225, 0.1);
+        color: var(--info-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .item-icon.warning {
+        background-color: rgba(251, 99, 64, 0.1);
+        color: var(--warning-color);
+    }
+
+    .item-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-right: 1rem;
+    }
+
+    .item-details {
+        flex: 1;
+    }
+
+    .item-title {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.25rem;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .item-title:hover {
+        color: var(--primary-color);
+    }
+
+    .item-subtitle {
+        color: #718096;
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .item-subtitle a {
+        color: #718096;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .item-subtitle a:hover {
+        color: var(--primary-color);
+    }
+
+    .item-meta-info {
+        font-size: 0.8rem;
+        color: #a0aec0;
+    }
+
+    .item-meta {
+        font-size: 0.875rem;
+        color: #a0aec0;
+        white-space: nowrap;
+    }
+
+    .item-date {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .item-status {
+        display: flex;
+        align-items: center;
+    }
+
+    .status-badge {
+        padding: 0.4rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .status-pending {
+        background-color: rgba(251, 99, 64, 0.1);
+        color: var(--warning-color);
+    }
+
+    .status-approved {
+        background-color: rgba(72, 187, 120, 0.1);
+        color: var(--success-color);
+    }
+
+    .status-rejected {
+        background-color: rgba(245, 54, 92, 0.1);
+        color: var(--danger-color);
+    }
+
+    /* État vide */
+    .empty-state {
+        padding: 3rem 1.5rem;
+        text-align: center;
+        color: #718096;
+    }
+
+    .empty-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: rgba(72, 187, 120, 0.1);
+        color: var(--success-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin: 0 auto 1rem;
+    }
+
+    .empty-text {
+        font-size: 1rem;
+        color: #718096;
+    }
+
+    /* Section de graphique */
+    .chart-body {
+        padding: 1.5rem;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 250px;
+        transition: var(--transition);
+    }
+
+    .chart-legend {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .legend-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 4px;
+        margin-right: 0.5rem;
+    }
+
+    .color-pending { background-color: #fb6340; }
+    .color-approved { background-color: #2dce89; }
+    .color-rejected { background-color: #f5365c; }
+
+    .legend-text {
+        font-size: 0.875rem;
+        color: #4a5568;
+    }
+
+    /* Media Queries */
+    @media (max-width: 768px) {
+        .welcome-banner {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .banner-content {
+            margin-bottom: 0;
+            max-width: 100%;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .list-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .item-meta, .item-status {
+            align-self: flex-start;
+            margin-left: 50px;
+        }
+
+        .chart-container {
+            height: 200px;
+        }
+    }
+</style>
+
+<script>
+    // Configuration du graphique
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('candidaturesChart').getContext('2d');
+        const labels = [];
+        const data = [];
+        const backgroundColors = [];
+        
+        {% for stat in stats_candidatures %}
+            labels.push('{{ stat.get_statut_display }}');
+            data.push({{ stat.total }});
+            
+            // Définir les couleurs en fonction du statut
+            {% if stat.statut == 'EN_ATTENTE' %}
+                backgroundColors.push('#fb6340');
+            {% elif stat.statut == 'ACCEPTEE' %}
+                backgroundColors.push('#2dce89');
+            {% else %}
+                backgroundColors.push('#f5365c');
+            {% endif %}
+        {% endfor %}
+        
+        // Animation des cartes de statistiques
+        setTimeout(() => {
+            document.querySelectorAll('.progress-bar').forEach(bar => {
+                bar.style.width = '100%';
+            });
+        }, 300);
+        
+        // Création du graphique avec des animations améliorées
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderWidth: 0,
+                    hoverOffset: 15,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        titleColor: '#2d3748',
+                        bodyColor: '#4a5568',
+                        bodyFont: {
+                            size: 14
+                        },
+                        padding: 12,
+                        boxWidth: 10,
+                        boxHeight: 10,
+                        boxPadding: 3,
+                        usePointStyle: true,
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                    duration: 1000,
+                    easing: 'easeOutCirc'
+                }
+            }
+        });
+
+        // Fonctionnalité de recherche globale
+        const searchInput = document.querySelector('.search-input');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                // Filtrer les offres récentes
+                const offres = document.querySelectorAll('.dashboard-card:nth-child(1) .list-item');
+                offres.forEach(offre => {
+                    const titre = offre.querySelector('.item-title').textContent.toLowerCase();
+                    const entreprise = offre.querySelector('.item-subtitle').textContent.toLowerCase();
+                    
+                    if (titre.includes(searchTerm) || entreprise.includes(searchTerm)) {
+                        offre.style.display = '';
+                    } else {
+                        offre.style.display = 'none';
+                    }
+                });
+                
+                // Filtrer les offres expirant bientôt
+                const offresExpirant = document.querySelectorAll('.dashboard-card:nth-child(2) .list-item');
+                offresExpirant.forEach(offre => {
+                    const titre = offre.querySelector('.item-title').textContent.toLowerCase();
+                    const entreprise = offre.querySelector('.item-subtitle').textContent.toLowerCase();
+                    const date = offre.querySelector('.item-date').textContent.toLowerCase();
+                    
+                    if (titre.includes(searchTerm) || entreprise.includes(searchTerm) || date.includes(searchTerm)) {
+                        offre.style.display = '';
+                    } else {
+                        offre.style.display = 'none';
+                    }
+                });
+                
+                // Filtrer les candidatures récentes
+                const candidatures = document.querySelectorAll('.dashboard-card:nth-child(3) .list-item');
+                candidatures.forEach(candidature => {
+                    const nom = candidature.querySelector('.item-title').textContent.toLowerCase();
+                    const poste = candidature.querySelector('.item-subtitle').textContent.toLowerCase();
+                    
+                    if (nom.includes(searchTerm) || poste.includes(searchTerm)) {
+                        candidature.style.display = '';
+                    } else {
+                        candidature.style.display = 'none';
+                    }
+                });
+                
+                // Afficher un message si aucun résultat
+                const dashboardCards = document.querySelectorAll('.dashboard-card');
+                dashboardCards.forEach(card => {
+                    const items = card.querySelectorAll('.list-item');
+                    const visibleItems = Array.from(items).filter(item => item.style.display !== 'none');
+                    const emptyState = card.querySelector('.empty-search-results');
+                    
+                    // Supprimer le message existant s'il y en a un
+                    if (emptyState) {
+                        emptyState.remove();
+                    }
+                    
+                    // Si aucun résultat, afficher un message
+                    if (visibleItems.length === 0 && searchTerm !== '') {
+                        const cardBody = card.querySelector('.card-body');
+                        const emptyDiv = document.createElement('div');
+                        emptyDiv.className = 'empty-state empty-search-results';
+                        emptyDiv.innerHTML = `
+                            <div class="empty-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <p class="empty-text">Aucun résultat trouvé pour "${searchTerm}"</p>
+                        `;
+                        cardBody.appendChild(emptyDiv);
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

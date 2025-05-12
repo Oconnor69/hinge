@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidatures Spontanées | Gestion des Candidatures</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #796ACD;
+            --primary-dark: #6457B5;
+            --primary-light: #8F82D9;
+            --primary-lighter: #A095E1;
+            --primary-gradient: linear-gradient(145deg, #8a77dd, #6457B5);
+            --secondary-color: #f7fafc;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #2dce89;
+            --info-color: #11cdef;
+            --warning-color: #fb6340;
+            --danger-color: #f5365c;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Barre de navigation moderne */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 1rem;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        
+        .navbar-brand {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            position: relative;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            background: rgba(121, 106, 205, 0.08);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 3px 10px rgba(121, 106, 205, 0.1);
+            transition: var(--transition);
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .back-btn {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+        }
+        
+        .back-btn:hover {
+            background-color: var(--gray-300);
+            color: var(--gray-900);
+            transform: translateX(-3px);
+        }
+
+        /* Header avec effet de gradient */
+        .dashboard-header {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before, 
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dashboard-header::before {
+            width: 250px;
+            height: 250px;
+            top: -100px;
+            right: -70px;
+        }
+
+        .dashboard-header::after {
+            width: 200px;
+            height: 200px;
+            bottom: -80px;
+            left: -60px;
+        }
+
+        .header-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .header-content {
+            z-index: 1;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Filtres */
+        .filter-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .filter-container:hover {
+            box-shadow: 0 10px 25px rgba(121, 106, 205, 0.15);
+        }
+
+        .filter-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            font-family: 'Poppins', sans-serif;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(121, 106, 205, 0.15);
+            outline: none;
+        }
+
+        .btn-filter {
+            font-family: 'Poppins', sans-serif;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-filter:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Liste des candidats */
+        .candidates-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .candidates-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .candidates-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .candidates-count {
+            background: var(--primary-lighter);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .candidates-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .candidate-card {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .candidate-card:hover {
+            background-color: var(--gray-100);
+        }
+
+        .candidate-card:last-child {
+            border-bottom: none;
+        }
+
+        .candidate-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .candidate-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .candidate-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .candidate-name {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .candidate-email {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .candidate-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .badge-education {
+            background-color: rgba(17, 205, 239, 0.1);
+            color: var(--info-color);
+        }
+
+        .badge-experience {
+            background-color: rgba(45, 206, 137, 0.1);
+            color: var(--success-color);
+        }
+
+        .candidate-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-view {
+            background-color: var(--gray-200);
+            color: var(--primary-light);
+            width: auto;
+            padding: 0 15px;
+        }
+
+        .btn-view:hover {
+            background-color: var(--primary-lighter);
+            transform: translateY(-3px);
+            color: white;
+        }
+        
+        .text-eye {
+            padding-left: 10px;
+        }
+
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            color: var(--gray-600);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .empty-message {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-description {
+            font-size: 0.9rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            
+            .filter-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .candidate-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .candidate-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="navbar">
+            <div class="navbar-left">
+                <a href="{% url 'entreprise_dashboard' %}" class="nav-btn back-btn">
+                    <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+                </a>
+            </div>
+        </nav>
+        
+        <header class="dashboard-header">
+            <div class="header-icon">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="header-content">
+                <h1 class="header-title">Candidatures Spontanées</h1>
+                <p>Découvrez les candidats qui ont postulé spontanément à votre entreprise</p>
+            </div>
+        </header>
+
+        <div class="filter-container">
+            <h2 class="filter-title"><i class="fas fa-filter"></i> Filtrer les candidats</h2>
+            <form method="get" class="filter-form">
+                <div class="form-group">
+                    <label for="niveau_etude" class="form-label">Niveau d'étude</label>
+                    <select name="niveau_etude" id="niveau_etude" class="form-control">
+                        <option value="">-- Tous les niveaux --</option>
+                        <option value="BAC" {% if niveau_etude == "BAC" %}selected{% endif %}>Baccalauréat</option>
+                        <option value="BAC+2" {% if niveau_etude == "BAC+2" %}selected{% endif %}>Bac +2</option>
+                        <option value="BAC+3" {% if niveau_etude == "BAC+3" %}selected{% endif %}>Bac +3</option>
+                        <option value="BAC+5" {% if niveau_etude == "BAC+5" %}selected{% endif %}>Bac +5</option>
+                        <option value="DOCTORAT" {% if niveau_etude == "DOCTORAT" %}selected{% endif %}>Doctorat</option>
+                        <option value="AUTRE" {% if niveau_etude == "AUTRE" %}selected{% endif %}>Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="experience" class="form-label">Expérience minimale (années)</label>
+                    <input type="number" name="experience" id="experience" class="form-control" value="{{ experience|default_if_none:'' }}" min="0" />
+                </div>
+                <div class="form-group" style="align-self: flex-end;">
+                    <button type="submit" class="btn-filter">
+                        <i class="fas fa-search"></i> Appliquer les filtres
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="candidates-container">
+            <div class="candidates-header">
+                <h2 class="candidates-title">
+                    <i class="fas fa-users"></i> 
+                    Candidats disponibles
+                    <span class="candidates-count">{{ candidats|length }}</span>
+                </h2>
+            </div>
+            
+            <ul class="candidates-list">
+                {% for candidat in candidats %}
+                <li class="candidate-card">
+                    <div class="candidate-info">
+                        <div class="candidate-avatar">
+                            {{ candidat.prenom|first }}{{ candidat.nom|first }}
+                        </div>
+                        <div class="candidate-details">
+                            <h3 class="candidate-name">{{ candidat.prenom }} {{ candidat.nom }}</h3>
+                            <span class="candidate-email">{{ candidat.email }}</span>
+                            <div class="candidate-badges">
+                                <span class="badge badge-education">
+                                    <i class="fas fa-graduation-cap"></i> {{ candidat.niveau_etude }}
+                                </span>
+                                <span class="badge badge-experience">
+                                    <i class="fas fa-briefcase"></i> {{ candidat.annee_experience }} an(s)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="candidate-actions">
+                        <a href="{% url 'detail_candidatess' candidat.id %}" class="btn-action btn-view" title="Voir les détails">
+                            <i class="fas fa-eye"></i> <span class="text-eye">Voir détail</span>
+                        </a>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-user-slash"></i>
+                    </div>
+                    <h3 class="empty-message">Aucun candidat trouvé</h3>
+                    <p class="empty-description">Aucun candidat ne correspond aux critères de recherche sélectionnés. Essayez de modifier vos filtres.</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

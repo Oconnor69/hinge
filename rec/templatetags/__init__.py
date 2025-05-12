@@ -1,0 +1,1 @@
+# Package d'initialisation pour les tags de template personnalisés 

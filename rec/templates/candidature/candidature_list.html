@@ -1,0 +1,824 @@
+{% extends 'base.html' %}
+{% load candidature_filters %}
+
+{% block title %}Liste des Candidatures | Gestion des Candidatures{% endblock %}
+
+{% block page_title %}Liste des Candidatures{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Accueil</a></li>
+<li class="breadcrumb-item active" aria-current="page">Candidatures</li>
+{% endblock %}
+
+{% block content %}
+<div class="animate__animated animate__fadeIn">
+    <!-- En-tête de la page -->
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="header-text">
+                <h2 class="header-title">Liste des candidatures</h2>
+                <p class="header-subtitle">Gérez et suivez l'état de vos candidatures</p>
+            </div>
+        </div>
+        <a href="{% url 'candidature_create' %}" class="btn btn-create button-animate">
+            <i class="fas fa-plus-circle"></i>
+            <span>Nouvelle candidature</span>
+        </a>
+    </div>
+
+    <!-- Filtre et recherche -->
+    <div class="filter-container">
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Rechercher une candidature...">
+        </div>
+        <div class="filter-box">
+            <button class="btn-filter" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-filter"></i>
+                <span>Filtrer</span>
+            </button>
+            <ul class="dropdown-menu shadow filter-menu" aria-labelledby="filterDropdown">
+                <li><a class="dropdown-item" href="#" data-filter="all">Toutes les candidatures</a></li>
+                <li><a class="dropdown-item" href="#" data-filter="en_attente">En attente</a></li>
+                <li><a class="dropdown-item" href="#" data-filter="acceptee">Acceptées</a></li>
+                <li><a class="dropdown-item" href="#" data-filter="refusee">Refusées</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Liste des candidatures en cartes -->
+    <div class="candidatures-grid" id="candidaturesContainer">
+        {% for candidature in object_list %}
+        <div class="candidature-card animate__animated animate__fadeIn" style="animation-delay: {{ forloop.counter0|divisibleby:3 }}00ms"
+             data-status="{{ candidature.statut|lower }}">
+            <div class="card-body">
+                <div class="candidature-header">
+                    <div class="candidature-avatar">
+                        <div class="avatar-circle">
+                            {{ candidature.candidat.prenom|first }}{{ candidature.candidat.nom|first }}
+                        </div>
+                    </div>
+                    <div class="candidature-info">
+                        <div class="name-badge-container">
+                            <h3 class="candidature-name">{{ candidature.candidat.prenom }} {{ candidature.candidat.nom }}</h3>
+                            <span class="priority-badge {% if candidature.priorite == 'HAUTE' %}high{% elif candidature.priorite == 'MOYENNE' %}medium{% else %}low{% endif %}">
+                                {{ candidature.priorite|default:"NORMALE"|lower }}
+                            </span>
+                        </div>
+                        <span class="candidature-email">{{ candidature.candidat.email }}</span>
+                        <span class="last-updated">Mise à jour: {{ candidature.date_modification|date:"d/m/Y H:i"|default:candidature.date_postulation|date:"d/m/Y H:i" }}</span>
+                    </div>
+                </div>
+                
+                <div class="candidature-details">
+                    <div class="detail-item">
+                        <i class="fas fa-briefcase"></i>
+                        <span>{{ candidature.offre.titre }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-building"></i>
+                        <span>{{ candidature.offre.entreprise.nom }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ candidature.offre.lieu|default:"Non spécifié" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>{{ candidature.offre.salaire|default:"Salaire non précisé" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-code"></i>
+                        <span>{{ candidature.candidat.competence_principale|default:"Non spécifié" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Postulée le {{ candidature.date_postulation|date:"d/m/Y" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-tag"></i>
+                        {% if candidature.statut == 'EN_ATTENTE' %}
+                        <span class="badge-statut pending">{{ candidature.get_statut_display }}</span>
+                        {% elif candidature.statut == 'ACCEPTEE' %}
+                        <span class="badge-statut approved">{{ candidature.get_statut_display }}</span>
+                        {% else %}
+                        <span class="badge-statut rejected">{{ candidature.get_statut_display }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <a href="{% url 'candidature_detail' candidature.pk %}" class="btn-action btn-view button-animate">
+                    <i class="fas fa-eye"></i>
+                    <span>Détails</span>
+                </a>
+                <div class="action-group">
+                    <a href="{% url 'candidature_update' candidature.pk %}" class="btn-icon btn-edit button-animate" title="Modifier" style="color: #28a745; border: none; background-color: rgba(40, 167, 69, 0.1);">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <div class="dropdown d-inline-block">
+                        <button class="btn-icon button-animate" type="button" data-bs-toggle="dropdown" title="Options" style="color: #6c757d; border: none; background-color: rgba(108, 117, 125, 0.1);">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                            <li>
+                                <a class="dropdown-item action-accept" href="#" onclick="changerStatut({{ candidature.pk }}, 'ACCEPTEE')">
+                                    <i class="fas fa-check text-success me-2"></i>Accepter
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item action-reject" href="#" onclick="changerStatut({{ candidature.pk }}, 'REFUSEE')">
+                                    <i class="fas fa-times text-danger me-2"></i>Refuser
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item action-delete" href="{% url 'candidature_delete' candidature.pk %}">
+                                    <i class="fas fa-trash-alt text-danger me-2"></i>Supprimer
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state animate__animated animate__fadeIn">
+            <div class="empty-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <h3 class="empty-title">Aucune candidature disponible</h3>
+            <p class="empty-text">Commencez par créer une nouvelle candidature.</p>
+            <a href="{% url 'candidature_create' %}" class="btn btn-create button-animate">
+                <i class="fas fa-plus-circle"></i>
+                <span>Ajouter une candidature</span>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Header styles */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .header-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(121, 106, 205, 0.8), rgba(121, 106, 205, 0.6));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 10px rgba(121, 106, 205, 0.2);
+    }
+    
+    .header-title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .header-subtitle {
+        margin: 0.3rem 0 0 0;
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+    
+    .btn-create {
+        padding: 0.7rem 1.2rem;
+        background: linear-gradient(135deg, #796ACD, #9B8BDB);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 10px rgba(121, 106, 205, 0.3);
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-create:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(121, 106, 205, 0.35);
+        color: white;
+        background: linear-gradient(135deg, #6357b5, #796ACD);
+        text-decoration: none;
+    }
+    
+    /* Filter and search */
+    .filter-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .search-box {
+        flex: 1;
+        position: relative;
+        height: 3em;
+        border-radius: 2em;
+        border: 2px solid rgba(121, 106, 205, 0.7);
+        display: flex;
+        align-items: center;
+        background-color: white;
+        box-shadow: 0 4px 12px rgba(121, 106, 205, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .search-box:focus-within {
+        border-color: #796ACD;
+        box-shadow: 0 4px 16px rgba(121, 106, 205, 0.2);
+    }
+    
+    .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        margin: 0 1em;
+        color: rgba(121, 106, 205, 0.9);
+        font-size: 1rem;
+        font-weight: 500;
+        background: transparent;
+    }
+    
+    .search-input::placeholder {
+        color: rgba(121, 106, 205, 0.6);
+        font-weight: 500;
+    }
+    
+    .search-icon {
+        margin-left: 1.5em;
+        color: rgba(121, 106, 205, 0.7);
+        font-size: 1rem;
+    }
+    
+    .btn-filter {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        background-color: #f0f2ff;
+        border: 1px solid rgba(121, 106, 205, 0.2);
+        color: #796ACD;
+        font-weight: 500;
+        box-shadow: 0 4px 10px rgba(121, 106, 205, 0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-filter:hover {
+        background-color: #e6e9ff;
+        border-color: rgba(121, 106, 205, 0.5);
+        color: #6357b5;
+        text-decoration: none;
+    }
+    
+    .filter-menu {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+        padding: 0.5rem 0;
+    }
+    
+    .filter-menu .dropdown-item {
+        padding: 0.6rem 1.2rem;
+        color: #495057;
+        transition: all 0.2s ease;
+    }
+    
+    .filter-menu .dropdown-item:hover {
+        background-color: rgba(121, 106, 205, 0.1);
+        color: #796ACD;
+    }
+    
+    /* Cards Grid Layout */
+    .candidatures-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .candidatures-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Candidature Card */
+    .candidature-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .candidature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(121, 106, 205, 0.15);
+        border-color: rgba(121, 106, 205, 0.1);
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+        flex: 1;
+    }
+    
+    .candidature-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .candidature-avatar {
+        flex-shrink: 0;
+    }
+    
+    .avatar-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #796ACD, #9B8BDB);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 10px rgba(121, 106, 205, 0.3);
+    }
+    
+    .candidature-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .name-badge-container {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    
+    .priority-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        text-transform: capitalize;
+        font-weight: 600;
+    }
+    
+    .priority-badge.high {
+        background-color: rgba(220, 53, 69, 0.15);
+        color: #dc3545;
+    }
+    
+    .priority-badge.medium {
+        background-color: rgba(255, 193, 7, 0.15);
+        color: #ffc107;
+    }
+    
+    .priority-badge.low {
+        background-color: rgba(40, 167, 69, 0.15);
+        color: #28a745;
+    }
+    
+    .last-updated {
+        display: block;
+        font-size: 0.75rem;
+        color: #adb5bd;
+        margin-top: 0.2rem;
+    }
+    
+    .candidature-name {
+        margin: 0 0 0.3rem 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .candidature-email {
+        display: block;
+        font-size: 0.85rem;
+        color: #6c757d;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .candidature-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 0.9rem;
+        color: #495057;
+    }
+    
+    .detail-item i {
+        color: var(--primary-color);
+        opacity: 0.7;
+        width: 16px;
+        text-align: center;
+    }
+    
+    /* Status badges */
+    .badge-statut {
+        display: inline-flex;
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        align-items: center;
+    }
+    
+    .badge-statut.pending {
+        background-color: rgba(255, 193, 7, 0.15);
+        color: #ffc107;
+    }
+    
+    .badge-statut.approved {
+        background-color: rgba(40, 167, 69, 0.15);
+        color: #28a745;
+    }
+    
+    .badge-statut.rejected {
+        background-color: rgba(220, 53, 69, 0.15);
+        color: #dc3545;
+    }
+    
+    /* Card Actions */
+    .card-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background-color: #f8f9fa;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-action {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-view {
+        background: rgba(121, 106, 205, 0.1);
+        color: var(--primary-color);
+    }
+    
+    .btn-view:hover {
+        background: var(--primary-color);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-action i {
+        font-size: 0.9rem;
+    }
+    
+    .action-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        background-color: white;
+        border: none;
+        color: #6c757d;
+        text-decoration: none;
+    }
+    
+    .btn-favorite {
+        color: #6c757d;
+    }
+    
+    .btn-favorite:hover, .btn-favorite .active {
+        color: #ffc107;
+        background-color: rgba(255, 193, 7, 0.1);
+        border-color: #ffc107;
+        text-decoration: none;
+    }
+    
+    .btn-edit:hover {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+        border: none;
+        text-decoration: none;
+    }
+    
+    .btn-delete:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border-color: #dc3545;
+        text-decoration: none;
+    }
+    
+    a, a:hover {
+        text-decoration: none;
+    }
+    
+    /* Empty state */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        text-align: center;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        grid-column: 1 / -1;
+    }
+    
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(121, 106, 205, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-text {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+        max-width: 400px;
+    }
+    
+    /* Animations */
+    .button-animate {
+        transition: all 0.3s ease;
+    }
+    
+    .button-animate:hover {
+        transform: translateY(-3px);
+    }
+    
+    /* Notification styling */
+    .notification {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 9999;
+        max-width: 400px;
+    }
+    
+    .notification.show {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+    
+    .notification.success .notification-icon {
+        background: #28a745;
+    }
+    
+    .notification.danger .notification-icon {
+        background: #dc3545;
+    }
+    
+    .notification-title {
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+    
+    .notification-message {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .dropdown-menu {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+        padding: 0.5rem 0;
+        overflow: hidden;
+    }
+    
+    .dropdown-item {
+        padding: 0.6rem 1.2rem;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .dropdown-item i {
+        width: 20px;
+        text-align: center;
+    }
+    
+    .dropdown-item.action-accept {
+        color: #28a745;
+    }
+    
+    .dropdown-item.action-accept:hover {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+    
+    .dropdown-item.action-reject {
+        color: #dc3545;
+    }
+    
+    .dropdown-item.action-reject:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+    
+    .dropdown-item.action-delete {
+        color: #dc3545;
+    }
+    
+    .dropdown-item.action-delete:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                const cards = document.querySelectorAll('.candidature-card');
+                
+                cards.forEach(card => {
+                    const name = card.querySelector('.candidature-name').textContent.toLowerCase();
+                    const email = card.querySelector('.candidature-email').textContent.toLowerCase();
+                    const offre = card.querySelector('.detail-item:nth-child(1)').textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || email.includes(searchTerm) || offre.includes(searchTerm)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Filter dropdown functionality
+        const filterItems = document.querySelectorAll('.dropdown-item[data-filter]');
+        filterItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const filter = this.getAttribute('data-filter');
+                const cards = document.querySelectorAll('.candidature-card');
+                
+                cards.forEach(card => {
+                    const status = card.getAttribute('data-status');
+                    
+                    if (filter === 'all') {
+                        card.style.display = '';
+                    } else if (status.includes(filter)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Update filter button text
+                const filterButton = document.getElementById('filterDropdown');
+                const filterText = this.textContent.trim();
+                filterButton.innerHTML = `<i class="fas fa-filter"></i> <span>${filterText}</span>`;
+            });
+        });
+    });
+    
+    // Function to change candidature status
+    function changerStatut(id, statut) {
+        // Cette fonction devrait appeler une API pour mettre à jour le statut
+        
+        const statusText = statut === 'ACCEPTEE' ? 'acceptée' : 'refusée';
+        const statusIcon = statut === 'ACCEPTEE' ? 'check-circle' : 'times-circle';
+        const statusColor = statut === 'ACCEPTEE' ? 'success' : 'danger';
+        
+        // Show notification
+        showNotification(
+            statusColor,
+            statusIcon,
+            'Statut mis à jour',
+            `La candidature #${id} a été ${statusText} avec succès.`
+        );
+        
+        // In a real implementation you'd make an API call, then reload when successful
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
+    }
+    
+    // Generic notification function
+    function showNotification(type, icon, title, message) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-icon">
+                <i class="fas fa-${icon}"></i>
+            </div>
+            <div class="notification-content">
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            </div>
+        `;
+        
+        // Add to document
+        document.body.appendChild(notification);
+        
+        // Show then hide
+        setTimeout(() => {
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }, 100);
+    }
+</script>
+{% endblock %}

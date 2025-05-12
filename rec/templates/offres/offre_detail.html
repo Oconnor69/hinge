@@ -1,0 +1,484 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ offre.titre }} | Détail de l'offre{% endblock %}
+
+{% block page_title %}Détail de l'offre{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Accueil</a></li>
+<li class="breadcrumb-item"><a href="{% url 'offre_list' %}">Offres</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ offre.titre }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="animate__animated animate__fadeIn">
+    <!-- En-tête de la page avec fond dégradé -->
+    <div class="offre-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <div class="header-text">
+                <h2 class="header-title">{{ offre.titre }}</h2>
+                <div class="header-subtitle">
+                    <div class="company-badge">
+                        <div class="avatar-circle bg-info">
+                            {{ offre.entreprise.nom|first }}
+                        </div>
+                        <span>{{ offre.entreprise.nom }}</span>
+                    </div>
+                    
+                    <!-- Badges d'information -->
+                    <div class="badges-container">
+                        <div class="info-badge">
+                            <i class="fas fa-file-contract"></i>
+                            <span>{{ offre.type_contrat }}</span>
+                        </div>
+                        <div class="info-badge">
+                            <i class="fas fa-tag"></i>
+                            <span>{{ offre.get_categorie_display }}</span>
+                        </div>
+                        <div class="info-badge">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ offre.localisation }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="action-buttons animate__animated animate__fadeInUp">
+            <a href="{% url 'offre_update' pk=offre.pk %}" class="btn-action btn-edit button-animate">
+                <i class="fas fa-edit"></i>
+                <span>Modifier</span>
+            </a>
+            <a href="{% url 'offre_delete' pk=offre.pk %}" class="btn-action btn-delete button-animate">
+                <i class="fas fa-trash-alt"></i>
+                <span>Supprimer</span>
+            </a>
+            <a href="{% url 'offre_list' %}" class="btn-action btn-return button-animate">
+                <i class="fas fa-arrow-left"></i>
+                <span>Retour</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="offre-detail-container">
+        <!-- Colonne d'informations -->
+        <div class="offre-info-card">
+            <div class="card-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Calendrier</h3>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Publiée le</div>
+                        <div class="info-value">{{ offre.date_publication|date:"d/m/Y" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Expire le</div>
+                        <div class="info-value">
+                            {% if offre.date_expiration|date:'Y-m-d' < today|date:'Y-m-d' %}
+                                <span class="text-danger"><i class="fas fa-exclamation-circle me-1"></i>{{ offre.date_expiration|date:"d/m/Y" }}</span>
+                            {% elif offre.date_expiration|date:'Y-m-d' <= days7|date:'Y-m-d' %}
+                                <span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>{{ offre.date_expiration|date:"d/m/Y" }}</span>
+                            {% else %}
+                                <span class="text-success"><i class="fas fa-check-circle me-1"></i>{{ offre.date_expiration|date:"d/m/Y" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h3>Rémunération</h3>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Salaire</div>
+                        <div class="info-value salary-badge">
+                            {{ offre.salaire }} MAD
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>Profil recherché</h3>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Niveau d'étude</div>
+                        <div class="info-value education-badge">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>{{ offre.niveau_etude }}</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Expérience requise</div>
+                        <div class="info-value experience-badge">
+                            <i class="fas fa-briefcase"></i>
+                            <span>{{ offre.experience_requise }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description et exigences -->
+        <div class="offre-content-cards">
+            <div class="content-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-align-left"></i>
+                    </div>
+                    <h3>Description</h3>
+                </div>
+                <div class="content-body">
+                    {{ offre.description|linebreaks }}
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3>Exigences</h3>
+                </div>
+                <div class="content-body">
+                    {{ offre.exigences|linebreaks }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* En-tête de la page avec fond dégradé */
+    .offre-header {
+        background: linear-gradient(135deg, rgb(121, 106, 205, 0.9), rgb(121, 106, 205, 0.7));
+        border-radius: 16px;
+        padding: 2rem;
+        color: white;
+        box-shadow: 0 8px 20px rgba(121, 106, 205, 0.2);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .offre-header::before, .offre-header::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .offre-header::before {
+        width: 200px;
+        height: 200px;
+        top: -80px;
+        right: -50px;
+    }
+    
+    .offre-header::after {
+        width: 150px;
+        height: 150px;
+        bottom: -60px;
+        left: -40px;
+    }
+    
+    .header-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .header-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        flex-shrink: 0;
+    }
+    
+    .header-title {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-subtitle {
+        margin-top: 0.8rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .company-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 1rem;
+    }
+    
+    .avatar-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .badges-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .info-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        font-size: 0.85rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Boutons d'action */
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .btn-action {
+        padding: 0.7rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-action i {
+        font-size: 1rem;
+    }
+    
+    .btn-edit {
+        background-color: #ff9800;
+        color: white;
+    }
+    
+    .btn-edit:hover {
+        background-color: #f57c00;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(245, 124, 0, 0.3);
+        color: white;
+    }
+    
+    .btn-delete {
+        background-color: #f44336;
+        color: white;
+    }
+    
+    .btn-delete:hover {
+        background-color: #e53935;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(229, 57, 53, 0.3);
+        color: white;
+    }
+    
+    .btn-return {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn-return:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        color: white;
+    }
+    
+    /* Layout conteneur principal */
+    .offre-detail-container {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 1.5rem;
+    }
+    
+    @media (max-width: 992px) {
+        .offre-detail-container {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Carte d'informations */
+    .offre-info-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+    
+    .card-section {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    }
+    
+    .card-section:last-child {
+        border-bottom: none;
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .section-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(121, 106, 205, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 1rem;
+    }
+    
+    .section-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #444;
+    }
+    
+    /* Grille d'informations */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .info-value {
+        font-weight: 500;
+        color: #333;
+    }
+    
+    /* Badges */
+    .badge-contrat {
+        display: inline-block;
+        padding: 0.3rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .salary-badge, .education-badge, .experience-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+    }
+    
+    .salary-badge {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .education-badge {
+        background-color: rgba(121, 106, 205, 0.1);
+        color: var(--primary-color);
+    }
+    
+    .experience-badge {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #ff9800;
+    }
+    
+    /* Cartes de contenu */
+    .offre-content-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .content-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 1.5rem;
+    }
+    
+    .content-body {
+        margin-top: 1rem;
+        color: #444;
+        line-height: 1.6;
+    }
+    
+    /* Animation */
+    .button-animate {
+        transition: all 0.3s ease;
+    }
+    
+    .button-animate:hover {
+        transform: translateY(-3px);
+    }
+</style>
+{% endblock %}

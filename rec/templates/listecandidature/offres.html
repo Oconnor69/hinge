@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des offres</title>
+    <!-- Fonts Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        :root {
+            --primary-color: #796ACD;
+            --primary-light: #8F82D9;
+            --primary-dark: #6457B5;
+            --secondary-color: #f7fafc;
+            --success-color: #2dce89;
+            --info-color: #11cdef;
+            --warning-color: #fb6340;
+            --danger-color: #f5365c;
+            --dark-color: #212529;
+            --light-color: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(121, 106, 205, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--gray-700);
+            line-height: 1.6;
+            padding-top: 70px; /* Pour la navbar fixe */
+        }
+        
+        .container-fluid {
+            padding: 0;
+        }
+        
+        .main-wrapper {
+            display: flex;
+            position: relative;
+        }
+        
+        /* Sidebar styles */
+        .filters-sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - 70px);
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            overflow-y: auto;
+            z-index: 99;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .filters-mobile-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filters-mobile-toggle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .filters-mobile-toggle:active {
+            transform: translateY(0);
+        }
+        
+        .filter-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .filter-title-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-badge {
+            background: linear-gradient(135deg, #796ACD, #9B8BDB);
+            color: white;
+            border-radius: 50px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 0.5rem 0;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-accordion-header:hover {
+            color: var(--primary-color);
+        }
+        
+        .filter-accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .filter-accordion-icon.active {
+            transform: rotate(180deg);
+        }
+        
+        .filter-accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .filter-accordion-content.active {
+            max-height: 500px;
+        }
+        
+        .filter-group {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+        
+        .filter-group:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .filter-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+        
+        .filter-control {
+            width: 100%;
+            padding: 0.65rem 1rem;
+            font-size: 0.9rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            background-color: var(--light-color);
+            color: var(--gray-700);
+            transition: var(--transition);
+        }
+        
+        .filter-control:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 0.2rem rgba(121, 106, 205, 0.15);
+            outline: none;
+        }
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        
+        .filter-tag {
+            background-color: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 50px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .filter-tag:hover {
+            background-color: var(--gray-200);
+            transform: translateY(-2px);
+        }
+        
+        .filter-tag.active {
+            background: linear-gradient(135deg, #9B8BDB, #796ACD);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .filter-tag i {
+            margin-right: 0.35rem;
+            font-size: 0.7rem;
+        }
+        
+        .range-slider {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .range-slider-values {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+        
+        .active-filters {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .active-filter {
+            background: rgba(121, 106, 205, 0.1);
+            border-radius: 50px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        
+        .active-filter i {
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .active-filter:hover {
+            background: rgba(121, 106, 205, 0.2);
+        }
+        
+        .filter-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn-apply-filters {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 1.25rem;
+            background: linear-gradient(135deg, #9B8BDB, #796ACD);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(121, 106, 205, 0.2);
+            text-decoration: none;
+        }
+        
+        .btn-apply-filters:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(121, 106, 205, 0.25);
+            color: white;
+        }
+        
+        .btn-apply-filters:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(121, 106, 205, 0.2);
+        }
+        
+        .btn-reset-filters {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 1.25rem;
+            background-color: transparent;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn-reset-filters:hover {
+            background-color: var(--gray-100);
+            color: var(--gray-700);
+            border-color: var(--gray-400);
+            transform: translateY(-3px);
+        }
+        
+        .btn-reset-filters:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-icon {
+            margin-right: 0.5rem;
+        }
+        
+        /* Content area */
+        .content-area {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 1.5rem;
+        }
+        
+        /* Navbar styles */
+        .navbar {
+            background: linear-gradient(135deg, #6457B5, #796ACD);
+            box-shadow: 0 4px 20px rgba(101, 87, 181, 0.25);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            font-size: 1.4rem;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .navbar-brand::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            bottom: -12px;
+            left: 0;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.65, 0.05, 0.36, 1);
+            border-radius: 2px;
+        }
+        
+        .navbar-brand:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .navbar-brand img {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        
+        .navbar-brand:hover img {
+            transform: scale(1.08) translateY(-2px) rotate(2deg);
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.15));
+        }
+        
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            padding: 0.8rem 1.2rem;
+            margin: 0 0.2rem;
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            z-index: 1;
+        }
+        
+        .navbar-nav .nav-link:hover, 
+        .navbar-nav .nav-link.active {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: white;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            opacity: 0;
+        }
+        
+        .navbar-nav .nav-link:hover::after, 
+        .navbar-nav .nav-link.active::after {
+            opacity: 1;
+            width: 5px;
+        }
+        
+        .navbar-toggler {
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            padding: 0.4rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-toggler:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1rem;
+            border-radius: 50px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .user-profile:active {
+            transform: translateY(-2px);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9B8BDB, #796ACD);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .user-profile:hover .user-avatar {
+            transform: rotate(10deg);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .user-role {
+            font-weight: 600;
+            font-size: 0.75rem;
+            background: linear-gradient(135deg, #9B8BDB, #796ACD);
+            padding: 3px 10px;
+            border-radius: 50px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .user-profile:hover .user-role {
+            background: linear-gradient(135deg, #B3A6E6, #9B8BDB);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .user-name {
+            font-weight: 500;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: all 0.3s ease;
+        }
+        
+        .user-profile:hover .user-name {
+            transform: translateX(3px);
+        }
+        
+        /* Page content styles */
+        .page-header {
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            background: linear-gradient(120deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            top: -150px;
+            right: -150px;
+        }
+        
+        .page-header::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            bottom: -100px;
+            left: -100px;
+        }
+        
+        .offres-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .offre-card {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .offre-card:hover {
+            box-shadow: 0 10px 25px rgba(121, 106, 205, 0.15);
+            border-color: rgba(121, 106, 205, 0.1);
+        }
+        
+        .offre-header {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .offre-logo {
+            width: 48px;
+             height: 48px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .offre-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            text-align: center;
+            margin: 0;
+        }
+        
+        .offre-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .offre-details {
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+        
+        .detail-item i {
+            width: 20px;
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+        
+        .offre-actions {
+            margin-top: auto;
+        }
+        
+        .btn-view {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 0.65rem 1.25rem;
+            background: linear-gradient(135deg, #796ACD, #9B8BDB);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(121, 106, 205, 0.2);
+        }
+        
+        .btn-view:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(121, 106, 205, 0.25);
+            color: white;
+        }
+        
+        .btn-view:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(121, 106, 205, 0.2);
+        }
+        
+        .btn-view i {
+            margin-right: 0.5rem;
+        }
+        
+        .no-results {
+            grid-column: 1 / -1;
+            padding: 3rem;
+            text-align: center;
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .no-results-text {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.65rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge-primary {
+            background-color: rgba(121, 106, 205, 0.15);
+            color: var(--primary-color);
+        }
+        
+        .badge-success {
+            background-color: rgba(45, 206, 137, 0.15);
+            color: var(--success-color);
+        }
+        
+        @media (max-width: 992px) {
+            .filters-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .filters-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .content-area {
+                margin-left: 0;
+            }
+            
+            .filters-mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .offres-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .user-name {
+                display: none;
+            }
+            
+            .search-form-nav {
+                max-width: 100%;
+                margin: 0.5rem 0;
+            }
+
+            .navbar-brand img {
+                height: 45px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .offres-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Animation */
+        .button-animate {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .button-animate::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.4s ease-in-out;
+        z-index: -1;
+    }
+    
+    .button-animate:hover::before {
+        left: 0;
+        width: 100%;
+    }
+    
+    .button-animate:active {
+        transform: scale(0.97);
+        transition: transform 0.1s;
+    }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="/media/logos/HingerV00.png" alt="Hinge" height="55">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'liste_offres' %}">
+                            <i class="fas fa-briefcase me-1"></i>Offres
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mes_candidatures' %}">
+                            <i class="fas fa-file-alt me-1"></i>Mes candidatures
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profil' %}">
+                            <i class="fas fa-user-edit me-1"></i>Profil
+                        </a>
+                    </li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="{%url 'profil' %}" class="user-profile">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span class="user-role">Candidat</span>
+                        <div class="user-name">{{ request.user.username }}</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="main-wrapper">
+            <!-- Sidebar de filtres -->
+            <aside class="filters-sidebar" id="filtersSidebar">
+                <div class="filter-title">
+                    <div class="filter-title-text">
+                    <i class="fas fa-filter"></i>
+                    Filtrer les offres
+                    </div>
+                    <span class="filter-badge" id="filterCount">0</span>
+                </div>
+                
+                <div class="active-filters" id="activeFilters"></div>
+                
+                <form method="get" action="" id="filterForm">
+                    <div class="filter-group">
+                        <div class="filter-accordion-header" data-target="typeContratContent">
+                            <label class="filter-label mb-0">Type de contrat</label>
+                            <i class="fas fa-chevron-down filter-accordion-icon"></i>
+                        </div>
+                        <div class="filter-accordion-content" id="typeContratContent">
+                            <select name="type_contrat" id="type_contrat" class="filter-control mt-3">
+                            <option value="">Tous les types de contrat</option>
+                            {% for value, label in types_contrat %}
+                                <option value="{{ value }}" {% if selected_type_contrat == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                            
+                            <div class="filter-tags">
+                                {% for value, label in types_contrat %}
+                                    <div class="filter-tag {% if selected_type_contrat == value %}active{% endif %}" data-value="{{ value }}">
+                                        <i class="fas fa-briefcase"></i>{{ label }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="filter-accordion-header" data-target="localisationContent">
+                            <label class="filter-label mb-0">Localisation</label>
+                            <i class="fas fa-chevron-down filter-accordion-icon"></i>
+                        </div>
+                        <div class="filter-accordion-content" id="localisationContent">
+                            <select name="localisation" id="localisation" class="filter-control mt-3">
+                            <option value="">Toutes les localisations</option>
+                            {% for loc in localisations %}
+                                <option value="{{ loc }}" {% if selected_localisation == loc %}selected{% endif %}>{{ loc }}</option>
+                            {% endfor %}
+                        </select>
+                            
+                            <div class="filter-tags">
+                                {% for loc in localisations %}
+                                    <div class="filter-tag {% if selected_localisation == loc %}active{% endif %}" data-value="{{ loc }}">
+                                        <i class="fas fa-map-marker-alt"></i>{{ loc }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="filter-accordion-header" data-target="salaireContent">
+                            <label class="filter-label mb-0">Plage de salaire</label>
+                            <i class="fas fa-chevron-down filter-accordion-icon"></i>
+                        </div>
+                        <div class="filter-accordion-content" id="salaireContent">
+                            <div class="row mt-3">
+                                <div class="col-6">
+                        <input type="number" name="salaire_min" id="salaire_min" class="filter-control" placeholder="Min" value="{{ selected_salaire_min|default_if_none:'' }}">
+                    </div>
+                                <div class="col-6">
+                        <input type="number" name="salaire_max" id="salaire_max" class="filter-control" placeholder="Max" value="{{ selected_salaire_max|default_if_none:'' }}">
+                                </div>
+                            </div>
+                            
+                            <div class="filter-tags mt-3">
+                                <div class="filter-tag" data-min="0" data-max="5000">
+                                    <i class="fas fa-money-bill-wave"></i>< 5 000 MAD
+                                </div>
+                                <div class="filter-tag" data-min="5000" data-max="10000">
+                                    <i class="fas fa-money-bill-wave"></i>5 000 - 10 000 MAD
+                                </div>
+                                <div class="filter-tag" data-min="10000" data-max="50000">
+                                    <i class="fas fa-money-bill-wave"></i>10 000 - 50 000 MAD
+                                </div>
+                                <div class="filter-tag" data-min="50000" data-max="99999999">
+                                    <i class="fas fa-money-bill-wave"></i>> 50 000 MAD
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button type="submit" class="btn-apply-filters button-animate">
+                            <i class="fas fa-search btn-icon"></i>
+                            Appliquer les filtres
+                        </button>
+                        <a href="?" class="btn-reset-filters button-animate" id="resetFilters">
+                            <i class="fas fa-redo-alt btn-icon"></i>
+                            Réinitialiser
+                        </a>
+                    </div>
+                </form>
+            </aside>
+            
+            <!-- Bouton pour afficher/masquer les filtres en mobile -->
+            <button class="filters-mobile-toggle button-animate" id="filtersToggle">
+                <i class="fas fa-filter"></i>
+            </button>
+            
+            <!-- Zone de contenu principal -->
+            <main class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Liste des offres</h1>
+                    <p class="page-subtitle">Découvrez toutes les opportunités d'emploi disponibles</p>
+                </div>
+                
+                <div class="offres-grid">
+                    {% for offre in offres %}
+                        <div class="offre-card">
+                            <div class="offre-header">
+                                {% if offre.entreprise.logo %}
+                                    <img src="{{ offre.entreprise.logo.url }}" alt="{{ offre.entreprise.nom }}" class="offre-logo">
+                                {% else %}
+                                    <div class="offre-logo d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-building" style="font-size: 2rem; color: var(--gray-400);"></i>
+                                    </div>
+                                {% endif %}
+                                <h3 class="offre-title">{{ offre.titre }}</h3>
+                            </div>
+                            
+                            <div class="offre-body">
+                                <div class="offre-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-building"></i>
+                                        <span>{{ offre.entreprise.nom }}</span>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ offre.localisation }}</span>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <i class="fas fa-file-contract"></i>
+                                        <span>{{ offre.get_type_contrat_display }}</span>
+                                    </div>
+
+                                    {% if offre.salaire %}
+                                    <div class="detail-item">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span>{{ offre.salaire }} MAD</span>
+                                    </div>
+                                    {% else %}
+                                        <div class="detail-item">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                            <span class="text-muted">Salaire non précisé</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="offre-actions">
+                                    <a href="{% url 'detail_offre' offre.id %}" class="btn-view button-animate">
+                                        <i class="fas fa-eye"></i>
+                                        Voir détail
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="no-results">
+                            <i class="fas fa-search"></i>
+                            <p class="no-results-text">Aucune offre ne correspond à vos critères de recherche.</p>
+                            <a href="?" class="btn-apply-filters button-animate">
+                                <i class="fas fa-redo"></i>
+                                Réinitialiser les filtres
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Script pour le toggle de la sidebar en mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const filtersToggle = document.getElementById('filtersToggle');
+            const filtersSidebar = document.getElementById('filtersSidebar');
+            
+            if (filtersToggle && filtersSidebar) {
+                filtersToggle.addEventListener('click', function() {
+                    filtersSidebar.classList.toggle('show');
+                });
+                
+                // Fermer la sidebar en cliquant en dehors
+                document.addEventListener('click', function(event) {
+                    const isClickInsideSidebar = filtersSidebar.contains(event.target);
+                    const isClickOnToggle = filtersToggle.contains(event.target);
+                    
+                    if (!isClickInsideSidebar && !isClickOnToggle && filtersSidebar.classList.contains('show')) {
+                        filtersSidebar.classList.remove('show');
+                    }
+                });
+            }
+            
+            // Gestion des accordéons de filtres
+            const accordionHeaders = document.querySelectorAll('.filter-accordion-header');
+            
+            accordionHeaders.forEach(header => {
+                
+                header.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const targetContent = document.getElementById(targetId);
+                    const icon = this.querySelector('.filter-accordion-icon');
+                    
+                    if (targetContent && icon) {
+                        targetContent.classList.toggle('active');
+                        icon.classList.toggle('active');
+                    }
+                });
+            });
+            
+            // Gestion des tags de filtres
+            const filterTags = document.querySelectorAll('.filter-tag');
+            const filterCount = document.getElementById('filterCount');
+            const activeFiltersContainer = document.getElementById('activeFilters');
+            const typeContratSelect = document.getElementById('type_contrat');
+            const localisationSelect = document.getElementById('localisation');
+            const salaireMinInput = document.getElementById('salaire_min');
+            const salaireMaxInput = document.getElementById('salaire_max');
+            const salaireRange = document.getElementById('salaireRange');
+            const salaireMinValue = document.getElementById('salaireMin');
+            const salaireMaxValue = document.getElementById('salaireMax');
+            
+            let activeFilters = {
+                type_contrat: typeContratSelect.value,
+                localisation: localisationSelect.value,
+                salaire_min: salaireMinInput.value,
+                salaire_max: salaireMaxInput.value
+            };
+            
+            // Initialiser le compteur de filtres actifs
+            updateFilterCount();
+            
+            // Ajouter les filtres actifs au démarrage
+            updateActiveFiltersDisplay();
+            
+            filterTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const parent = this.closest('.filter-accordion-content');
+                    
+                    if (parent.id === 'typeContratContent') {
+                        // Désactiver tous les autres tags du même groupe
+                        const siblingTags = parent.querySelectorAll('.filter-tag');
+                        siblingTags.forEach(sib => sib.classList.remove('active'));
+                        
+                        // Activer ce tag
+                        this.classList.add('active');
+                        
+                        // Mettre à jour le select correspondant
+                        const value = this.getAttribute('data-value');
+                        typeContratSelect.value = value;
+                        activeFilters.type_contrat = value;
+                    } 
+                    else if (parent.id === 'localisationContent') {
+                        // Désactiver tous les autres tags du même groupe
+                        const siblingTags = parent.querySelectorAll('.filter-tag');
+                        siblingTags.forEach(sib => sib.classList.remove('active'));
+                        
+                        // Activer ce tag
+                        this.classList.add('active');
+                        
+                        // Mettre à jour le select correspondant
+                        const value = this.getAttribute('data-value');
+                        localisationSelect.value = value;
+                        activeFilters.localisation = value;
+                    }
+                    else if (parent.id === 'salaireContent') {
+                        // Désactiver tous les autres tags du même groupe
+                        const siblingTags = parent.querySelectorAll('.filter-tag');
+                        siblingTags.forEach(sib => sib.classList.remove('active'));
+                        
+                        // Activer ce tag
+                        this.classList.add('active');
+                        
+                        // Mettre à jour les inputs correspondants
+                        const min = this.getAttribute('data-min');
+                        const max = this.getAttribute('data-max');
+                        salaireMinInput.value = min;
+                        salaireMaxInput.value = max;
+                        activeFilters.salaire_min = min;
+                        activeFilters.salaire_max = max;
+                        
+                        // Mettre à jour le slider
+                        updateSalaireRangeDisplay(min, max);
+                    }
+                    
+                    // Mettre à jour l'affichage des filtres actifs
+                    updateActiveFiltersDisplay();
+                    updateFilterCount();
+                });
+            });
+            
+            // Gérer le changement des selects
+            typeContratSelect.addEventListener('change', function() {
+                activeFilters.type_contrat = this.value;
+                
+                // Mettre à jour les tags correspondants
+                const tags = document.querySelectorAll('#typeContratContent .filter-tag');
+                tags.forEach(tag => {
+                    if (tag.getAttribute('data-value') === this.value) {
+                        tag.classList.add('active');
+                    } else {
+                        tag.classList.remove('active');
+                    }
+                });
+                
+                updateActiveFiltersDisplay();
+                updateFilterCount();
+            });
+            
+            localisationSelect.addEventListener('change', function() {
+                activeFilters.localisation = this.value;
+                
+                // Mettre à jour les tags correspondants
+                const tags = document.querySelectorAll('#localisationContent .filter-tag');
+                tags.forEach(tag => {
+                    if (tag.getAttribute('data-value') === this.value) {
+                        tag.classList.add('active');
+                    } else {
+                        tag.classList.remove('active');
+                    }
+                });
+                
+                updateActiveFiltersDisplay();
+                updateFilterCount();
+            });
+            
+            // Gérer le changement des inputs de salaire
+            salaireMinInput.addEventListener('input', function() {
+                activeFilters.salaire_min = this.value;
+                
+                // Mettre à jour le slider
+                updateSalaireRangeFromInputs();
+                
+                // Désactiver tous les tags salaire
+                const tags = document.querySelectorAll('#salaireContent .filter-tag');
+                tags.forEach(tag => tag.classList.remove('active'));
+                
+                updateActiveFiltersDisplay();
+                updateFilterCount();
+            });
+            
+            salaireMaxInput.addEventListener('input', function() {
+                activeFilters.salaire_max = this.value;
+                
+                // Mettre à jour le slider
+                updateSalaireRangeFromInputs();
+                
+                // Désactiver tous les tags salaire
+                const tags = document.querySelectorAll('#salaireContent .filter-tag');
+                tags.forEach(tag => tag.classList.remove('active'));
+                
+                updateActiveFiltersDisplay();
+                updateFilterCount();
+            });
+            
+            // Réinitialiser les filtres
+            const resetButton = document.getElementById('resetFilters');
+            resetButton.addEventListener('click', function(e) {
+                // Empêcher le comportement par défaut du lien
+                e.preventDefault();
+                
+                // Réinitialiser tous les champs
+                typeContratSelect.value = '';
+                localisationSelect.value = '';
+                salaireMinInput.value = '';
+                salaireMaxInput.value = '';
+                
+                // Réinitialiser les filtres actifs
+                activeFilters = {
+                    type_contrat: '',
+                    localisation: '',
+                    salaire_min: '',
+                    salaire_max: ''
+                };
+                
+                // Réinitialiser tous les tags
+                const allTags = document.querySelectorAll('.filter-tag');
+                allTags.forEach(tag => tag.classList.remove('active'));
+                
+                // Mettre à jour l'affichage
+                updateActiveFiltersDisplay();
+                updateFilterCount();
+                updateSalaireRangeDisplay(0, 100000);
+                
+                // Rediriger vers la page sans filtres
+                window.location.href = '?';
+            });
+            
+            // Fonctions utilitaires
+            function updateFilterCount() {
+                let count = 0;
+                
+                if (activeFilters.type_contrat) count++;
+                if (activeFilters.localisation) count++;
+                if (activeFilters.salaire_min || activeFilters.salaire_max) count++;
+                
+                filterCount.textContent = count;
+                
+                // Ajouter une animation si des filtres sont actifs
+                if (count > 0) {
+                    filterCount.classList.add('pulse');
+                    setTimeout(() => {
+                        filterCount.classList.remove('pulse');
+                    }, 500);
+                }
+            }
+            
+            function updateActiveFiltersDisplay() {
+                // Vider le conteneur
+                activeFiltersContainer.innerHTML = '';
+                
+                // Ajouter les filtres actifs
+                if (activeFilters.type_contrat) {
+                    const selectedOption = typeContratSelect.options[typeContratSelect.selectedIndex];
+                    const label = selectedOption ? selectedOption.textContent : activeFilters.type_contrat;
+                    
+                    const filterElement = document.createElement('div');
+                    filterElement.className = 'active-filter';
+                    filterElement.innerHTML = `
+                        <span>Type: ${label}</span>
+                        <i class="fas fa-times" data-filter="type_contrat"></i>
+                    `;
+                    activeFiltersContainer.appendChild(filterElement);
+                    
+                    // Ajouter l'événement pour supprimer ce filtre
+                    const removeIcon = filterElement.querySelector('i');
+                    removeIcon.addEventListener('click', function() {
+                        activeFilters.type_contrat = '';
+                        typeContratSelect.value = '';
+                        
+                        // Désactiver les tags correspondants
+                        const tags = document.querySelectorAll('#typeContratContent .filter-tag');
+                        tags.forEach(tag => tag.classList.remove('active'));
+                        
+                        // Mettre à jour l'affichage immédiatement
+                        updateActiveFiltersDisplay();
+                        updateFilterCount();
+                        
+                        // Soumettre le formulaire automatiquement pour appliquer le changement
+                        document.getElementById('filterForm').submit();
+                    });
+                }
+                
+                if (activeFilters.localisation) {
+                    const filterElement = document.createElement('div');
+                    filterElement.className = 'active-filter';
+                    filterElement.innerHTML = `
+                        <span>Lieu: ${activeFilters.localisation}</span>
+                        <i class="fas fa-times" data-filter="localisation"></i>
+                    `;
+                    activeFiltersContainer.appendChild(filterElement);
+                    
+                    // Ajouter l'événement pour supprimer ce filtre
+                    const removeIcon = filterElement.querySelector('i');
+                    removeIcon.addEventListener('click', function() {
+                        activeFilters.localisation = '';
+                        localisationSelect.value = '';
+                        
+                        // Désactiver les tags correspondants
+                        const tags = document.querySelectorAll('#localisationContent .filter-tag');
+                        tags.forEach(tag => tag.classList.remove('active'));
+                        
+                        // Mettre à jour l'affichage immédiatement
+                        updateActiveFiltersDisplay();
+                        updateFilterCount();
+                        
+                        // Soumettre le formulaire automatiquement pour appliquer le changement
+                        document.getElementById('filterForm').submit();
+                    });
+                }
+                
+                if (activeFilters.salaire_min || activeFilters.salaire_max) {
+                    let salaireLabel = 'Salaire: ';
+                    
+                    if (activeFilters.salaire_min && activeFilters.salaire_max) {
+                        salaireLabel += `${formatNumber(activeFilters.salaire_min)} - ${formatNumber(activeFilters.salaire_max)} MAD`;
+                    } else if (activeFilters.salaire_min) {
+                        salaireLabel += `> ${formatNumber(activeFilters.salaire_min)} MAD`;
+                    } else {
+                        salaireLabel += `< ${formatNumber(activeFilters.salaire_max)} MAD`;
+                    }
+                    
+                    const filterElement = document.createElement('div');
+                    filterElement.className = 'active-filter';
+                    filterElement.innerHTML = `
+                        <span>${salaireLabel}</span>
+                        <i class="fas fa-times" data-filter="salaire"></i>
+                    `;
+                    activeFiltersContainer.appendChild(filterElement);
+                    
+                    // Ajouter l'événement pour supprimer ce filtre
+                    const removeIcon = filterElement.querySelector('i');
+                    removeIcon.addEventListener('click', function() {
+                        activeFilters.salaire_min = '';
+                        activeFilters.salaire_max = '';
+                        salaireMinInput.value = '';
+                        salaireMaxInput.value = '';
+                        
+                        // Désactiver les tags correspondants
+                        const tags = document.querySelectorAll('#salaireContent .filter-tag');
+                        tags.forEach(tag => tag.classList.remove('active'));
+                        
+                        // Mettre à jour l'affichage immédiatement
+                        updateActiveFiltersDisplay();
+                        updateFilterCount();
+                        
+                        // Soumettre le formulaire automatiquement pour appliquer le changement
+                        document.getElementById('filterForm').submit();
+                    });
+                }
+            }
+            
+            function updateSalaireRangeDisplay(min, max) {
+                salaireMinValue.textContent = formatNumber(min) + ' MAD';
+                salaireMaxValue.textContent = formatNumber(max) + ' MAD';
+                
+                // Mettre à jour la position du slider (à mi-chemin entre min et max)
+                const midValue = Math.floor((parseInt(min) + parseInt(max)) / 2);
+                salaireRange.value = midValue;
+            }
+            
+            function updateSalaireRangeFromInputs() {
+                const min = salaireMinInput.value ? parseInt(salaireMinInput.value) : 0;
+                const max = salaireMaxInput.value ? parseInt(salaireMaxInput.value) : 100000;
+                
+                salaireMinValue.textContent = formatNumber(min) + ' MAD';
+                salaireMaxValue.textContent = formatNumber(max) + ' MAD';
+                
+                // Mettre à jour la position du slider (à mi-chemin entre min et max)
+                const midValue = Math.floor((min + max) / 2);
+                salaireRange.value = midValue;
+            }
+            
+            function formatNumber(num) {
+                return new Intl.NumberFormat('fr-FR').format(num);
+            }
+            
+            // Ajouter une classe CSS pour l'animation de pulsation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.2); }
+                    100% { transform: scale(1); }
+                }
+                
+                .pulse {
+                    animation: pulse 0.5s ease;
+                }
+                
+                .filter-tag.active {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(121, 106, 205, 0.2);
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

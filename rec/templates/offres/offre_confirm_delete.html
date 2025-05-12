@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+
+{% block title %}Supprimer {{ offre.titre }}{% endblock %}
+
+{% block page_title %}Confirmation de suppression{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Accueil</a></li>
+<li class="breadcrumb-item"><a href="{% url 'offre_list' %}">Offres</a></li>
+{% if offre.entreprise %}
+<li class="breadcrumb-item"><a href="{% url 'offre_detail' offre.pk %}">{{ offre.titre }}</a></li>
+{% endif %}
+<li class="breadcrumb-item active" aria-current="page">Supprimer</li>
+{% endblock %}
+
+{% block content %}
+<div class="animate__animated animate__fadeIn">
+    <div class="delete-confirmation-container">
+        <div class="modern-card">
+            <div class="card-header">
+                <div class="header-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <h2 class="title">Confirmation de suppression</h2>
+            </div>
+            
+            <div class="card-body">
+                <div class="message-container">
+                    <p class="message">
+                        Vous êtes sur le point de supprimer l'offre <span class="entity-name">{{ offre.titre }}</span>
+                    </p>
+                    <p class="warning">
+                        Cette action est irréversible et toutes les données associées seront définitivement perdues.
+                    </p>
+                </div>
+                
+                <div class="entity-preview">
+                    <div class="entity-details">
+                        <div class="detail-item">
+                            <span class="detail-label"><i class="fas fa-briefcase"></i> Offre :</span>
+                            <span class="detail-value">{{ offre.titre }}</span>
+                        </div>
+                        {% if offre.entreprise %}
+                        <div class="detail-item">
+                            <span class="detail-label"><i class="fas fa-building"></i> Entreprise :</span>
+                            <span class="detail-value">{{ offre.entreprise.nom }}</span>
+                        </div>
+                        {% endif %}
+                        {% if offre.date_publication %}
+                        <div class="detail-item">
+                            <span class="detail-label"><i class="fas fa-calendar-alt"></i> Date de publication :</span>
+                            <span class="detail-value">{{ offre.date_publication }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <form method="post" class="action-buttons">
+        {% csrf_token %}
+                    <button type="submit" class="btn-delete button-animate">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Supprimer définitivement</span>
+                    </button>
+                    <a href="{% url 'offre_list' %}" class="btn-cancel button-animate">
+                        <i class="fas fa-times"></i>
+                        <span>Annuler</span>
+                    </a>
+    </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .delete-confirmation-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        min-height: 60vh;
+    }
+    
+    .modern-card {
+        width: 100%;
+        max-width: 650px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+    
+    .card-header {
+        background: linear-gradient(to right, rgb(255, 55, 98), rgb(255, 65, 153));
+        padding: 1.8rem;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .header-icon {
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .title {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 600;
+        text-align: center;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .message-container {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .message {
+        font-size: 1.2rem;
+        color: #495057;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+    
+    .entity-name {
+        font-weight: 700;
+        color: #333;
+        background-color: rgba(255, 117, 140, 0.1);
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+    }
+    
+    .warning {
+        color: #e74c3c;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    
+    .entity-preview {
+        display: flex;
+        justify-content: center;
+        margin: 1.5rem 0;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 12px;
+    }
+    
+    .entity-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        width: 100%;
+    }
+    
+    .detail-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .detail-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: #6c757d;
+        margin-right: 0.8rem;
+        min-width: 150px;
+    }
+    
+    .detail-label i {
+        margin-right: 0.5rem;
+        color: #ff758c;
+    }
+    
+    .detail-value {
+        color: #343a40;
+        font-weight: 500;
+    }
+    
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .btn-delete, .btn-cancel {
+        padding: 1rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-delete {
+        background-color: #ff758c;
+        color: white;
+    }
+    
+    .btn-delete:hover {
+        background-color: #ff5c76;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(255, 117, 140, 0.3);
+    }
+    
+    .btn-cancel {
+        background-color: #e9ecef;
+        color: #495057;
+        text-decoration: none;
+    }
+    
+    .btn-cancel:hover {
+        background-color: #dee2e6;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Animation des boutons */
+    .button-animate {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+    
+    .button-animate::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.4s ease-in-out;
+        z-index: -1;
+    }
+    
+    .button-animate:hover::before {
+        left: 0;
+        width: 100%;
+    }
+    
+    .button-animate:active {
+        transform: scale(0.97);
+        transition: transform 0.1s;
+    }
+    
+    /* Animation séquentielle des boutons */
+    .action-buttons .button-animate:nth-child(1) {
+        animation: fadeInButton 0.5s ease-out 0.3s backwards;
+    }
+    
+    .action-buttons .button-animate:nth-child(2) {
+        animation: fadeInButton 0.5s ease-out 0.5s backwards;
+    }
+    
+    @keyframes fadeInButton {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .delete-confirmation-container {
+            padding: 1rem;
+        }
+        
+        .card-header {
+            padding: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn-delete, .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .detail-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .detail-label {
+            min-width: auto;
+        }
+    }
+</style>
+{% endblock %}

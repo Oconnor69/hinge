@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supprimer ma candidature</title>
+    <!-- Fonts Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        :root {
+            --primary-color: #796ACD;
+            --primary-light: #8F82D9;
+            --primary-dark: #6457B5;
+            --secondary-color: #f7fafc;
+            --success-color: #2dce89;
+            --info-color: #11cdef;
+            --warning-color: #fb6340;
+            --danger-color: #f5365c;
+            --dark-color: #212529;
+            --light-color: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(121, 106, 205, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--gray-700);
+            line-height: 1.6;
+            padding-top: 90px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+        }
+        
+        /* Navbar styles */
+        .navbar {
+            background: linear-gradient(135deg, #6457B5, #796ACD);
+            box-shadow: 0 4px 20px rgba(101, 87, 181, 0.25);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            font-size: 1.4rem;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .navbar-brand::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            bottom: -12px;
+            left: 0;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.65, 0.05, 0.36, 1);
+            border-radius: 2px;
+        }
+        
+        .navbar-brand:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .navbar-brand img {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        
+        .navbar-brand:hover img {
+            transform: scale(1.08) translateY(-2px) rotate(2deg);
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.15));
+        }
+        
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            padding: 0.8rem 1.2rem;
+            margin: 0 0.2rem;
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            z-index: 1;
+        }
+        
+        .navbar-nav .nav-link:hover, 
+        .navbar-nav .nav-link.active {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: white;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            opacity: 0;
+        }
+        
+        .navbar-nav .nav-link:hover::after, 
+        .navbar-nav .nav-link.active::after {
+            opacity: 1;
+            width: 5px;
+        }
+        
+        .navbar-toggler {
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            padding: 0.4rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-toggler:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1rem;
+            border-radius: 50px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .user-profile:active {
+            transform: translateY(-2px);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9B8BDB, #796ACD);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .user-profile:hover .user-avatar {
+            transform: rotate(10deg);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .user-role {
+            font-weight: 600;
+            font-size: 0.75rem;
+            background: linear-gradient(135deg, #9B8BDB, #796ACD);
+            padding: 3px 10px;
+            border-radius: 50px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .user-profile:hover .user-role {
+            background: linear-gradient(135deg, #B3A6E6, #9B8BDB);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .user-name {
+            font-weight: 500;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: all 0.3s ease;
+        }
+        
+        .user-profile:hover .user-name {
+            transform: translateX(3px);
+        }
+        
+        /* Page header */
+        .page-header {
+            margin-top: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            background: linear-gradient(120deg, var(--danger-color), #ff7676);
+            color: white;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            top: -150px;
+            right: -150px;
+            z-index: 0;
+        }
+        
+        .page-header::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            bottom: -100px;
+            left: -100px;
+            z-index: 0;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Confirmation card */
+        .confirmation-container {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .confirmation-container:hover {
+            box-shadow: 0 10px 25px rgba(245, 54, 92, 0.15);
+        }
+        
+        .confirmation-icon {
+            font-size: 3.5rem;
+            color: var(--danger-color);
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .confirmation-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+        }
+        
+        .confirmation-text {
+            font-size: 1.1rem;
+            color: var(--gray-700);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .offre-details {
+            background-color: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .offre-title {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Button styles */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+        
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #e01e3c;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(245, 54, 92, 0.3);
+        }
+        
+        .btn-cancel {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+        }
+        
+        .btn-cancel:hover {
+            background-color: var(--gray-300);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-action i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn-action {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="/media/logos/HingerV00.png" alt="Hinge" height="55">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'liste_offres' %}">
+                            <i class="fas fa-briefcase me-1"></i>Offres
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'mes_candidatures' %}">
+                            <i class="fas fa-file-alt me-1"></i>Mes candidatures
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profil' %}">
+                            <i class="fas fa-user-edit me-1"></i>Profil
+                        </a>
+                    </li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="{%url 'profil' %}" class="user-profile">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span class="user-role">Candidat</span>
+                        <div class="user-name">{{ request.user.username }}</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- En-tête de la page -->
+        <div class="page-header">
+            <div class="header-content">
+                <h1 class="page-title">Supprimer ma candidature</h1>
+                <p class="page-subtitle">Confirmation de suppression de votre candidature</p>
+            </div>
+        </div>
+
+        <!-- Contenu de confirmation -->
+        <div class="confirmation-container">
+            <div class="confirmation-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            
+            <h2 class="confirmation-title">Êtes-vous sûr de vouloir supprimer cette candidature ?</h2>
+            
+            <p class="confirmation-text">
+                Cette action est irréversible. Votre candidature sera définitivement supprimée de notre système.
+            </p>
+            
+            <div class="offre-details">
+                <h3 class="offre-title">Détails de la candidature :</h3>
+                <p><strong>Offre :</strong> {{ candidature.offre.titre }}</p>
+                <p><strong>Entreprise :</strong> {{ candidature.offre.entreprise.nom }}</p>
+                <p><strong>Date de candidature :</strong> {{ candidature.date_postulation|date:"d/m/Y" }}</p>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button type="submit" class="btn-action btn-danger">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Oui, supprimer ma candidature</span>
+                    </button>
+                    <a href="{% url 'mes_candidatures' %}" class="btn-action btn-cancel">
+                        <i class="fas fa-times"></i>
+                        <span>Non, annuler</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
