@@ -84,15 +84,27 @@ pymysql.install_as_MySQLdb()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'railway',  # comme vu dans la variable MYSQL_DATABASE
-        'USER': 'root',  # comme dans MYSQLUSER
-        'PASSWORD': 'UgQJZBNGHrelrRbcyEoUjqbIaCXqQkZ0',  # comme dans MYSQL_ROOT_PASSWORD
-        'HOST': 'yamabiko.proxy.rlwy.net',  # comme tu le montres dans l'image
-        'PORT': '27561',  # le port proxy, pas 3306 !
+        'NAME': 'railway',
+        'USER': 'root',
+        'PASSWORD': 'UgQJZBNGHrelrRbcyEoUjqbIaCXqQkZ0',
+        'HOST': 'mysql.railway.internal',
+        'PORT': '3306',
     }
 }
 
 
+
+import os
+
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-dev-secret')
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+CSRF_TRUSTED_ORIGINS = ['https://web-production-24924.up.railway.app']
+ALLOWED_HOSTS = ['web-production-24924.up.railway.app']
 
 
 
