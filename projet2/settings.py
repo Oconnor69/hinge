@@ -92,6 +92,7 @@ DATABASES = {
     }
 }
 
+DEBUG = True
 
 
 import os
