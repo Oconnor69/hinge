@@ -84,14 +84,14 @@ pymysql.install_as_MySQLdb()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'projet22',
-        'USER': 'root', 
-        'PASSWORD': '',
-        'HOST': 'localhost',          
-        'PORT': '3306',  
+        'NAME': os.environ.get('MYSQL_DATABASE', 'projet22'),
+        'USER': os.environ.get('MYSQL_USER', 'root'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', ''),
+        'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
+        'PORT': os.environ.get('MYSQL_PORT', '3306'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },              
+        },
     }
 }
 
