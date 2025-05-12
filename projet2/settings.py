@@ -84,16 +84,17 @@ pymysql.install_as_MySQLdb()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('MYSQL_DATABASE', 'projet22'),
-        'USER': os.environ.get('MYSQL_USER', 'root'),
-        'PASSWORD': os.environ.get('MYSQL_PASSWORD', ''),
-        'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
-        'PORT': os.environ.get('MYSQL_PORT', '3306'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'NAME': 'railway',  # comme vu dans la variable MYSQL_DATABASE
+        'USER': 'root',  # comme dans MYSQLUSER
+        'PASSWORD': 'UgQJZBNGHrelrRbcyEoUjqbIaCXqQkZ0',  # comme dans MYSQL_ROOT_PASSWORD
+        'HOST': 'yamabiko.proxy.rlwy.net',  # comme tu le montres dans l'image
+        'PORT': '27561',  # le port proxy, pas 3306 !
     }
 }
+
+
+
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
