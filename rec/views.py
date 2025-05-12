@@ -1434,3 +1434,30 @@ def export_candidats_csv(request):
         ])
 
     return response
+from django.shortcuts import render, redirect
+
+
+from django.shortcuts import render, redirect
+from .models import Admin
+from .forms import LogineeeForm
+
+def logineee_view(request):
+    message = ''
+    if request.method == 'POST':
+        form = LogineeeForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            mot_de_passe = form.cleaned_data['mot_de_passe']
+            try:
+                admin = Admin.objects.get(email=email, mot_de_passe=mot_de_passe)
+                request.session['admin_id'] = admin.id  # Auth simple via session
+                return redirect('dashboard')  # Redirige vers une page après connexion
+            except Admin.DoesNotExist:
+                message = "Identifiants invalides."
+    else:
+        form = LogineeeForm()
+    return render(request, 'logine.html', {'form': form, 'message': message})
+from django.shortcuts import render
+
+def choix_login_view(request):
+    return render(request, 'choix_login.html')

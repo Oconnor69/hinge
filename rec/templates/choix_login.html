@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Choix Connexion</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f2f4f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card-container {
+            max-width: 900px;
+            margin: 80px auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+        .card-option {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .card-option:hover {
+            transform: translateY(-8px);
+        }
+        .btn-purple {
+            background-color: #7c3aed;
+            color: white;
+            border: none;
+        }
+        .btn-purple:hover {
+            background-color: #6d28d9;
+        }
+        h2 {
+            color: #7c3aed;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .icon {
+            font-size: 48px;
+            color: #7c3aed;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container text-center mt-5">
+    <h1 class="mb-4">Bienvenue sur Hinger</h1>
+    <p class="mb-5 text-muted">Choisissez votre type de compte pour continuer</p>
+
+    <div class="card-container">
+        <div class="card-option">
+            <div class="icon">👤</div>
+            <h2>Je suis Candidat</h2>
+            <p>Accédez à votre espace candidat pour consulter et postuler aux offres.</p>
+            <a href="{% url 'login' %}" class="btn btn-purple mt-3">Connexion Candidat</a>
+        </div>
+
+        <div class="card-option">
+            <div class="icon">🏢</div>
+            <h2>Je suis Recruteur</h2>
+            <p>Connectez-vous pour gérer vos offres d'emploi et vos candidats.</p>
+            <a href="{% url 'entreprise_login' %}" class="btn btn-purple mt-3">Connexion Recruteur</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -53,6 +53,8 @@ urlpatterns = [
     path('candidats_postules/', views.candidats_postules_view, name='candidats_postules'),
     path('candidatees/<int:candidat_id>/', views.detail_candidat_view, name='detail_candidatess'),
     path('export-candidats/', views.export_candidats_csv, name='export_candidats'),
+    path('admine/', views.logineee_view, name='logineee'),
+    path('choix/', views.choix_login_view, name='choix_login'),
 ]
 
 

@@ -122,4 +122,16 @@ class CandidatForm(forms.ModelForm):
 from django import forms
 from .models import Offre
 
+class OffreForm(forms.ModelForm):
+    class Meta:
+        model = Offre
+        exclude = ['entreprise', 'date_publication']
+        widgets = {
+            'date_expiration': forms.DateInput(attrs={'type': 'date'}),
+        }
 
+from django import forms
+
+class LogineeeForm(forms.Form):
+    email = forms.EmailField(label="Email")
+    mot_de_passe = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)

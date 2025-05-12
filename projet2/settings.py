@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-oa9#(2c-p(6%nk%k3xymwpces#$wenktv0)de-%+9*om#1kt^w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['web-production-24924.up.railway.app']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -40,8 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rec',
-    'cloudinary',
-    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -78,38 +76,19 @@ WSGI_APPLICATION = 'projet2.wsgi.application'
 STATIC_URL = '/static/'
 
 
-import pymysql
-pymysql.install_as_MySQLdb()
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'railway',
-        'USER': 'root',
-        'PASSWORD': 'UgQJZBNGHrelrRbcyEoUjqbIaCXqQkZ0',
-        'HOST': 'mysql.railway.internal',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-DEBUG = True
-
-
-import os
-
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-dev-secret')
-
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-CSRF_TRUSTED_ORIGINS = ['https://web-production-24924.up.railway.app']
-ALLOWED_HOSTS = ['web-production-24924.up.railway.app']
-
-
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -132,14 +111,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 STATIC_URL = '/static/'
-import os
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # pour accéder à /static/css/...
-]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -151,8 +124,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
-CSRF_TRUSTED_ORIGINS = ['https://web-production-24924.up.railway.app']
 
 
 # Static files (CSS, JavaScript, Images)

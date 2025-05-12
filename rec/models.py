@@ -10,7 +10,11 @@ class Entreprise(models.Model):
 
     def __str__(self):
         return self.nom
-
+class Admin(models.Model):
+    email = models.EmailField(max_length=191, unique=True,  default="default")
+    mot_de_passe = models.CharField(max_length=128, default="default")
+    def __str__(self):
+        return self.email 
 from django.db import models
 
 class Offre(models.Model):
