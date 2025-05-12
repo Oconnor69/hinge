@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-oa9#(2c-p(6%nk%k3xymwpces#$wenktv0)de-%+9*om#1kt^w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['web-production-24924.up.railway.app']
 
 
 # Application definition
@@ -74,6 +74,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'projet2.wsgi.application'
 STATIC_URL = '/static/'
+
 
 import pymysql
 pymysql.install_as_MySQLdb()
